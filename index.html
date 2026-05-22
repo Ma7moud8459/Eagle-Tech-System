@@ -853,6 +853,14 @@
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تأجيل التركيب')" class="bg-amber-500 text-white font-bold py-2 rounded-xl text-xs">⏳ تأجيل</button>
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white font-bold py-2 rounded-xl text-xs">🛑 رفض الطلب</button>
                                 </div>
+                                
+                                ${currentActiveUser.role === 'مدير' ? `
+                                <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-100 mt-1">
+                                    <button onclick="openEditOrderModal('${o.firebaseKey}','${o.customerName}','${o.phone}','${o.address}','${o.locationUrl}',${o.amount},'${o.techName}','${o.details}','${o.inventoryNotes}')" class="bg-slate-800 text-white font-bold py-2 rounded-xl text-[10px] shadow">✏️ تعديل</button>
+                                    <button onclick="sendOrderDetailsToWhatsApp('${o.customerName}', '${o.id}', '${o.address}', '${o.amount}', '${o.details}', '${o.locationUrl}', '${o.inventoryNotes}')" class="bg-green-600 text-white font-bold py-2 rounded-xl text-[10px] shadow">💬 واتساب</button>
+                                    <button onclick="moveOrderToSecureTrashBinCloud('${o.firebaseKey}')" class="bg-red-50 border border-red-200 text-red-600 font-bold py-2 rounded-xl text-[10px]">🗑️ حذف</button>
+                                </div>
+                                ` : ''}
                             </div>
                         </div>`;
                 });
@@ -924,7 +932,6 @@
             } else {
                 matchedUser = globalTechnicians.find(t => t.email && t.email.toLowerCase() === emailInput && t.password === passwordInput);
             }
-
             if (matchedUser) {
                 currentActiveUser = matchedUser;
                 localStorage.setItem('eagle_tech_active_user_session', JSON.stringify({ email: emailInput, password: passwordInput }));
