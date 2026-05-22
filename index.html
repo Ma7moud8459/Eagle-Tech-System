@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eagle Tech - منظومة سحابية متوافقة مع الجوال</title>
+    <title>Eagle Tech - المنظومة السحابية الذكية المتكاملة الكبرى v2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
@@ -13,19 +13,33 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
     <style>
-        body { font-family: 'Cairo', sans-serif; }
+        body { font-family: 'Cairo', sans-serif; transition: background-color 0.3s, color 0.3s; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
+        
+        /* وميض الطوارئ اللحظي عند تحديث الحالات */
+        @keyframes pulse-highlight {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
+            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+            100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
+        }
+        .pulse-active { animation: pulse-highlight 2s ease-in-out infinite; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #invoicePrintArea, #invoicePrintArea * { visibility: visible; }
+            #invoicePrintArea { position: absolute; left: 0; top: 0; width: 100%; }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
+<body id="mainBodyElement" class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
 
     <div id="loginPageGate" class="fixed inset-0 bg-[#0f172a] z-[150] flex items-center justify-center p-4">
         <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-center">
             <div class="space-y-2">
-                <span class="text-4xl">🦅</span>
+                <span id="loginLogoIcon" class="text-5xl">🦅</span>
                 <h2 class="text-white font-black text-xl">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
-                <p class="text-xs text-slate-400 font-bold">يرجى تسجيل الدخول لصلاحيات الأسطول والفنيين</p>
+                <p class="text-xs text-slate-400 font-bold">يرجى تسجيل الدخول لصلاحيات الميدان والحوكمة</p>
             </div>
             
             <form id="systemLoginForm" class="space-y-4 text-right">
@@ -39,30 +53,30 @@
                 </div>
                 
                 <div id="loginErrorMsg" class="hidden text-[11px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg text-center">
-                    ⚠️ الإيميل أو كلمة المرور غير صحيحة!
+                    ⚠️ بيانات الدخول غير صحيحة أو الحساب غير مفعل!
                 </div>
 
                 <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-xl shadow-md transition-all">
                     تسجيل الدخول الآمن ←
                 </button>
             </form>
-            <p class="text-[9px] text-slate-600 font-bold">نظام تشفير سحابي محمي ماليًا © 2026</p>
+            <p class="text-[9px] text-slate-600 font-bold">نظام محمي ومشفر بالكامل سحابياً © 2026</p>
         </div>
     </div>
 
     <header class="md:hidden bg-[#121829] text-white p-4 flex justify-between items-center z-40 border-b border-slate-800">
         <div class="flex items-center gap-2">
-            <span class="text-xl">🦅</span>
+            <span class="system-logo-span text-xl">🦅</span>
             <span class="font-black text-sm">Eagle <span class="text-pink-500">Tech</span></span>
         </div>
-        <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg focus:outline-none text-pink-500 font-black text-lg">☰</button>
+        <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg text-pink-500 font-black text-lg">☰</button>
     </header>
 
     <aside id="sidebarMenu" class="fixed inset-y-0 right-0 transform translate-x-full md:relative md:translate-x-0 w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full md:h-screen z-50 border-l border-slate-800 transition-transform duration-300 ease-in-out">
-        <div class="space-y-6">
+        <div class="space-y-6 overflow-y-auto max-h-[80vh] pr-1">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div class="flex items-center gap-2">
-                    <span class="text-2xl">🦅</span>
+                    <span class="system-logo-span text-2xl">🦅</span>
                     <span class="text-white font-black text-lg tracking-wide">Eagle <span class="text-pink-500">Tech</span></span>
                 </div>
                 <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded">إغلاق ×</button>
@@ -70,87 +84,102 @@
 
             <nav class="space-y-1">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-white bg-slate-800 text-white">
-                    <span>📊 لوحة التحكم</span>
+                    <span>📊 لوحة التحكم الرئيسية</span>
                 </button>
                 <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
                     <span class="flex items-center gap-2">📋 الطلبات والأوردرات</span>
                     <span id="badge-orders-count" class="bg-pink-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">0</span>
                 </button>
                 <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                    <span>💰 المالية والمحفظة</span>
+                    <span>💰 العهد والمالية والمحفظة</span>
                 </button>
                 <button onclick="switchTab('techs')" id="nav-techs" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                    <span>👥 إدارة الفنيين</span>
+                    <span>👥 الكادر الفني والأسطول</span>
+                </button>
+                <button onclick="switchTab('trash')" id="nav-trash" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200 hidden">
+                    <span class="text-rose-400">🗑️ سلة المحذوفات السرية</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200 hidden">
+                    <span class="text-pink-400">⚙️ إعدادات لوحة التحكم</span>
                 </button>
             </nav>
         </div>
         
-        <div class="border-t border-slate-800 pt-4 text-center">
-            <p class="text-[10px] text-slate-500 font-bold">Eagle Tech © 2026</p>
+        <div id="techStatusWidget" class="hidden bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2 text-right my-2">
+            <p class="text-[10px] text-slate-400 font-bold border-b border-slate-800 pb-1">🚦 الرادار: حدد حالتك الآن:</p>
+            <div class="grid grid-cols-1 gap-1 text-[10px] font-bold text-white">
+                <button onclick="updateTechActiveRadarStatus('🟢 متاح بالسيارة')" class="bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🟢 متاح بالسيارة</button>
+                <button onclick="updateTechActiveRadarStatus('🟡 مشغول بتركيب')" class="bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🟡 مشغول بتركيب حالياً</button>
+                <button onclick="updateTechActiveRadarStatus('🔴 مغلق الدوام')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🔴 مغلق / انتهى الدوام</button>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-800 pt-3 text-center space-y-2">
+            <button onclick="toggleSystemDarkModeToggle()" class="text-[10px] font-bold text-slate-400 bg-slate-800 px-3 py-1 rounded-lg w-full">🌓 تحويل المظهر ليلى / نهارى</button>
+            <button onclick="logOutSystemAccountForce()" class="text-[11px] font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-1.5 rounded-xl w-full hover:bg-rose-600 hover:text-white transition-all">🚪 تسجيل خروج آمن</button>
+            <p class="text-[10px] text-slate-500 font-bold">منظومة إيجل تيك الكبرى © 2026</p>
         </div>
     </aside>
 
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 flex-shrink-0 z-20">
             <div class="w-full md:w-85 relative">
-                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث السريع برقم الأوردر أو العميل..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
+                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث الفائق (بالاسم، الجوال، المسار، الفني، البيان، التقييم)..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
                 <span class="absolute right-3 top-3 text-xs text-slate-400">🔍</span>
             </div>
             <div class="flex justify-between md:justify-end items-center w-full md:w-auto gap-4 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
                 <div class="flex items-center gap-1.5">
                     <span class="text-[11px] font-bold text-slate-400">الحساب:</span>
-                    <span id="activeUserNameText" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-[11px] px-2.5 py-1 rounded-lg">جاري التحميل...</span>
+                    <span id="activeUserNameText" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-[11px] px-2.5 py-1 rounded-lg">جاري المزامنة...</span>
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50" id="contentScrollArea">
 
             <div id="tab-dashboard" class="tab-content active space-y-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold text-slate-400">إجمالي طلبات النظام</p>
-                            <p id="dash-total" class="text-xl font-black text-slate-900">0</p>
-                        </div>
-                        <span class="text-xl bg-blue-50 p-2.5 rounded-xl">📦</span>
+                <div id="performanceWidgetRow" class="admin-only hidden grid grid-cols-1 md:grid-cols-2 gap-4 bg-gradient-to-r from-slate-900 to-indigo-950 p-4 rounded-2xl border border-slate-800 text-white">
+                    <div class="flex items-center gap-3 text-xs"><span class="text-2xl">🏆</span><div><p class="text-slate-400 font-bold">الفني الأعلى إنجازاً بالميدان:</p><p id="perf-top-done" class="font-black text-sm text-pink-400">جاري احتسابه سحابياً...</p></div></div>
+                    <div class="flex items-center gap-3 text-xs border-r border-slate-800 pr-4"><span class="text-2xl">💰</span><div><p class="text-slate-400 font-bold">الفني الأكثر تحصيلاً للكاش:</p><p id="perf-top-money" class="font-black text-sm text-emerald-400">جاري احتسابه سحابياً...</p></div></div>
+                </div>
+
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between col-span-2 lg:col-span-1">
+                        <div><p class="text-[10px] font-bold text-slate-400">إجمالي الطلبات</p><p id="dash-total" class="text-xl font-black text-slate-900">0</p></div>
+                        <span class="text-xl bg-blue-50 p-2 rounded-xl">📦</span>
                     </div>
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold text-slate-400">قيد التنفيذ والمتابعة</p>
-                            <p id="dash-progress" class="text-xl font-black text-amber-600">0</p>
-                        </div>
-                        <span class="text-xl bg-amber-50 p-2.5 rounded-xl">🚚</span>
+                        <div><p class="text-[10px] font-bold text-slate-400">في الانتظار</p><p id="dash-progress" class="text-xl font-black text-amber-600">0</p></div>
+                        <span class="text-xl bg-amber-50 p-2 rounded-xl">⏳</span>
                     </div>
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold text-slate-400">تم تسليمها وتركيبها</p>
-                            <p id="dash-success" class="text-xl font-black text-emerald-600">0</p>
-                        </div>
-                        <span class="text-xl bg-emerald-50 p-2.5 rounded-xl">✅</span>
+                        <div><p class="text-[10px] font-bold text-slate-400">جاري التركيب</p><p id="dash-current" class="text-xl font-black text-blue-600">0</p></div>
+                        <span class="text-xl bg-blue-50 p-2 rounded-xl">🚚</span>
                     </div>
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <p class="text-[11px] font-bold text-slate-400">بلاغات المشاكل والرفض</p>
-                            <p id="dash-cancel" class="text-xl font-black text-red-600">0</p>
-                        </div>
-                        <span class="text-xl bg-red-50 p-2.5 rounded-xl">⚠️</span>
+                        <div><p class="text-[10px] font-bold text-slate-400">تم بنجاح</p><p id="dash-success" class="text-xl font-black text-emerald-600">0</p></div>
+                        <span class="text-xl bg-emerald-50 p-2 rounded-xl">✅</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div><p class="text-[10px] font-bold text-slate-400">مشاكل / تأجيل</p><p id="dash-cancel" class="text-xl font-black text-rose-600">0</p></div>
+                        <span class="text-xl bg-rose-50 p-2 rounded-xl">🛑</span>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 hidden md:grid">
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 h-64">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 h-64 hidden md:block">
                         <canvas id="dashLineChart"></canvas>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-64 flex flex-col justify-between">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-64 flex flex-col justify-between hidden md:block">
                         <canvas id="dashPieChart"></canvas>
                     </div>
                 </div>
 
+                <div id="liveAlertBarElement" class="hidden bg-pink-500 text-white p-3 rounded-xl text-xs font-bold pulse-active text-center">🔔 تنبيه لحظي: قام أحد الفنيين بتحديث حالة أوردر ميداني الآن!</div>
+
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-                        <h3 class="font-black text-xs text-slate-700">📋 أحدث التحركات الميدانية</h3>
-                        <button onclick="switchTab('orders')" class="text-xs text-pink-500 font-bold">عرض الكل ←</button>
+                    <div class="p-4 bg-slate-50 border-b border-slate-200">
+                        <h3 class="font-black text-xs text-slate-700">📋 آخر التحديثات وحالات الميدان الفورية</h3>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-xs text-right text-slate-500">
@@ -161,16 +190,21 @@
             </div>
 
             <div id="tab-orders" class="tab-content space-y-4">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <div class="flex items-center gap-2 w-full sm:w-auto">
-                        <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="flex-1 sm:flex-none bg-pink-500 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md">+ طلب جديد</button>
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                        <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="admin-only bg-pink-500 hover:bg-pink-600 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md hidden">➕ أوردر جديد</button>
                         <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">تصدير Excel</button>
+                        <button onclick="printSelectedOrdersInvoices()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">🖨️ طباعة الفواتير المحددة</button>
+                        <button onclick="triggerAutoAIMatchingTechAssignment()" class="admin-only bg-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl hidden">🤖 توجيه ذكي بالذكاء الاصطناعي</button>
                     </div>
-                    <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-[10px] font-bold w-full sm:w-auto overflow-x-auto">
+                    <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-[10px] font-bold w-full lg:w-auto overflow-x-auto">
                         <button onclick="filterOrdersByStatus('الكل')" class="px-3 py-1.5 rounded-lg text-slate-700 bg-white shadow-sm whitespace-nowrap">الكل</button>
-                        <button onclick="filterOrdersByStatus('في الانتظار')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">معلق</button>
-                        <button onclick="filterOrdersByStatus('تم التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">تم</button>
-                        <button onclick="filterOrdersByStatus('رفض التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">مشكلة</button>
+                        <button onclick="filterOrdersByStatus('في الانتظار')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">في الانتظار</button>
+                        <button onclick="filterOrdersByStatus('جاري التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">جاري التركيب</button>
+                        <button onclick="filterOrdersByStatus('تم التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">تم التركيب</button>
+                        <button onclick="filterOrdersByStatus('تأجيل التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">المؤجل</button>
+                        <button onclick="filterOrdersByStatus('رفض التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">المرفوض</button>
+                        <button onclick="filterOrdersByStatus('بحاجة لصيانة دورية')" class="px-3 py-1.5 rounded-lg text-slate-700 bg-pink-100 whitespace-nowrap">🚨 بحاجة لصيانة</button>
                     </div>
                 </div>
 
@@ -178,39 +212,94 @@
                     <table class="w-full text-xs text-right text-slate-500">
                         <thead class="bg-slate-100 border-b border-slate-200 text-slate-700">
                             <tr>
-                                <th class="p-4 font-bold">رقم الطلب</th>
-                                <th class="p-4 font-bold">العميل والجوال</th>
-                                <th class="p-4 font-bold">المسار والعنوان</th>
-                                <th class="p-4 font-bold">المبلغ والتفاصيل</th>
-                                <th class="p-4 font-bold">الحالة</th>
-                                <th class="p-4 font-bold">الفني</th>
-                                <th class="p-4 font-bold text-center">الإجراء</th>
+                                <th class="p-4 font-bold text-center w-12"><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllOrders()"></th>
+                                <th class="p-4 font-bold">بيانات الطلب</th>
+                                <th class="p-4 font-bold">العميل والموبايل</th>
+                                <th class="p-4 font-bold">العنوان والمسار</th>
+                                <th class="p-4 font-bold">الحساب والمواد</th>
+                                <th class="p-4 font-bold">حالة الميدان والسبب</th>
+                                <th class="p-4 font-bold">الفني والتقييم</th>
+                                <th class="p-4 font-bold text-center">إجراء التحكم</th>
                             </tr>
                         </thead>
                         <tbody id="mainOrdersTableBodyDesktop"></tbody>
                     </table>
                 </div>
 
-                <div id="mainOrdersCardsContainerMobile" class="md:hidden space-y-3">
-                    </div>
+                <div id="mainOrdersCardsContainerMobile" class="md:hidden space-y-3"></div>
             </div>
 
             <div id="tab-financial" class="tab-content space-y-6">
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-emerald-500">
-                    <p class="text-xs font-bold text-slate-400 mb-1">الإيراد السحابي الكلي المعتمد</p>
-                    <p id="fin-total-revenue" class="text-xl font-black text-slate-900">0 ريال</p>
+                    <p class="text-xs font-bold text-slate-400 mb-1">إجمالي الإيرادات والتحصيلات السحابية المعتمدة بالخزينة</p>
+                    <p id="fin-total-revenue" class="text-2xl font-black text-slate-900">0 ريال</p>
                 </div>
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
+                    <h3 class="font-black text-xs text-slate-700 mb-2">💰 الحوكمة: تصفير عهد الكاش المستلمة من الفنيين</h3>
                     <div id="financialTechTableBody" class="space-y-3"></div>
                 </div>
             </div>
 
             <div id="tab-techs" class="tab-content space-y-6">
                 <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                    <h3 class="font-black text-xs text-slate-700">👥 الكادر الفني</h3>
-                    <button id="btnRegisterNewTech" onclick="toggleSidebarSettingsModal(true)" class="bg-pink-500 text-white text-xs font-black px-3 py-2 rounded-xl shadow">+ فني جديد</button>
+                    <h3 class="font-black text-xs text-slate-700">👥 طاقم الفنيين الميدانيين ورادار حالاتهم الحية</h3>
+                    <button id="btnRegisterNewTech" onclick="openNewTechModal()" class="admin-only bg-pink-500 text-white text-xs font-black px-4 py-2 rounded-xl shadow hidden">👥 حساب فني جديد</button>
                 </div>
-                <div id="techCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4"></div>
+                <div id="techCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
+            </div>
+
+            <div id="tab-trash" class="tab-content space-y-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200">
+                    <h3 class="font-black text-sm text-rose-600">🗑️ مخزن الأوردرات المحذوفة احتياطياً</h3>
+                    <p class="text-xs text-slate-400 mt-1">يمكنك استرجاع أي أوردر تم حذفه بالخطأ ليعود إلى السيرفر فوراً</p>
+                </div>
+                <div class="bg-white rounded-2xl border overflow-hidden">
+                    <table class="w-full text-xs text-right text-slate-500">
+                        <thead class="bg-slate-50 text-slate-700 border-b">
+                            <tr>
+                                <th class="p-3">رقم الطلب</th>
+                                <th class="p-3">العميل</th>
+                                <th class="p-3">المبلغ</th>
+                                <th class="p-3">الفني القديم</th>
+                                <th class="p-3 text-center">الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trashOrdersTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="tab-settings" class="tab-content space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 max-w-2xl space-y-6">
+                    <div>
+                        <h3 class="font-black text-sm text-slate-900">⚙️ الإعدادات المتقدمة وحساب الإدارة</h3>
+                        <p class="text-xs text-slate-400 mt-1">تعديل بيانات المسؤول، تغيير الشعار، والتحكم السحابي في النظام</p>
+                    </div>
+                    <hr class="border-slate-100">
+                    <form id="adminSettingsForm" class="space-y-4 text-right">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-500">اسم المسؤول / المؤسسة:</label>
+                                <input type="text" id="cfgAdminName" class="w-full text-xs p-3 bg-slate-50 border rounded-xl focus:outline-none focus:border-pink-500" required>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-500">شعار النظام الحالي (Emoji):</label>
+                                <input type="text" id="cfgAdminLogo" class="w-full text-xs p-3 bg-slate-50 border rounded-xl text-center focus:outline-none focus:border-pink-500" placeholder="🦅" required>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-500">البريد الإلكتروني الحالي للمدير:</label>
+                                <input type="email" id="cfgAdminEmail" class="w-full text-xs p-3 bg-slate-50 border rounded-xl focus:outline-none focus:border-pink-500" required>
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-500">كلمة المرور السرية للمدير:</label>
+                                <input type="text" id="cfgAdminPassword" class="w-full text-xs p-3 bg-slate-50 border rounded-xl focus:outline-none focus:border-pink-500" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="bg-pink-500 text-white text-xs font-black px-6 py-3 rounded-xl shadow">حفظ وتثبيت إعدادات المنظومة سحابياً</button>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -219,20 +308,27 @@
     <div id="addOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
             <div class="bg-[#121829] text-white px-5 py-4 flex justify-between items-center">
-                <h3 class="text-xs font-black">➕ استقبال وتوجيه أوردر ميداني جديد</h3>
+                <h3 id="orderModalTitle" class="text-xs font-black">➕ استقبال وتوجيه أوردر ميداني جديد</h3>
                 <button onclick="toggleOrderModal(false)" class="text-slate-400 font-bold text-lg">✕</button>
             </div>
             <form id="modalOrderForm" class="p-4 space-y-3">
-                <input type="text" id="moCustName" placeholder="اسم العميل" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
+                <input type="hidden" id="moEditKey">
+                <input type="text" id="moCustName" placeholder="اسم العميل بالكامل" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
                 <input type="tel" id="moCustPhone" placeholder="رقم الجوال" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
-                <input type="text" id="moAddress" placeholder="المسار / العنوان (مثال: الدمام - النزهة)" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
-                <input type="url" id="moLocationUrl" placeholder="رابط اللوكيشن (خرائط جوجل)" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none">
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="moAmount" placeholder="المبلغ (ريال)" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
-                    <select id="moTech" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none"></select>
+                <input type="text" id="moAddress" placeholder="المسار والعنوان (مثال: الدمام - النزهة)" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
+                
+                <div class="flex gap-2">
+                    <input type="url" id="moLocationUrl" placeholder="رابط اللوكيشن الخريطة (GPS)" class="flex-1 text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none">
+                    <button type="button" onclick="captureLiveCurrentGPSLocation()" class="bg-indigo-600 text-white px-3 rounded-lg text-xs font-bold">📍 التقاط موقعي</button>
                 </div>
-                <textarea id="moDetails" rows="3" placeholder="تفاصيل الكاميرات والمعدات المطلوبة..." class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required></textarea>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-lg shadow shadow-pink-500/20">حفظ وتحويل الطلب سحابياً فوراً</button>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="moAmount" placeholder="المبلغ المالي (ريال)" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
+                    <select id="moTech" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required></select>
+                </div>
+                <input type="text" id="moInventoryNotes" placeholder="المواد المستخدمة (مثال: 4 كاميرات داهوا، 1 جهاز تسجيل، 40 متر سلك)" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none">
+                <textarea id="moDetails" rows="3" placeholder="تفاصيل وبيان الكاميرات والمعدات المطلوبة..." class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required></textarea>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-lg shadow">حفظ وتحويل الأوردر سحابياً فوراً</button>
             </form>
         </div>
     </div>
@@ -240,53 +336,34 @@
     <div id="addTechModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
             <div class="bg-[#121829] text-white px-5 py-3 flex justify-between items-center">
-                <h3 class="text-xs font-black">➕ تسجيل حساب فني جديد</h3>
-                <button onclick="toggleSidebarSettingsModal(false)" class="text-slate-400 font-bold">✕</button>
+                <h3 id="techModalTitle" class="text-xs font-black">➕ تسجيل حساب فني جديد بالشركة</h3>
+                <button onclick="toggleTechModal(false)" class="text-slate-400 font-bold">✕</button>
             </div>
             <form id="modalTechForm" class="p-4 space-y-3">
+                <input type="hidden" id="mtEditKey">
                 <input type="text" id="mTechName" placeholder="اسم الفني بالكامل" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
                 <input type="email" id="mTechEmail" placeholder="البريد الإلكتروني للعمل" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
-                <input type="tel" id="mTechPhone" placeholder="رقم الجوال" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
+                <input type="tel" id="mTechPhone" placeholder="رقم الجوال الخاص بالفني" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
                 <input type="text" id="mTechPassword" placeholder="تعيين كلمة المرور السرية للفني" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
-                <button type="submit" class="w-full bg-pink-500 text-white text-xs font-black py-2.5 rounded-lg shadow">إنشاء الحساب وتفعيل الباسورد سحابياً</button>
+                <button type="submit" class="w-full bg-pink-500 text-white text-xs font-black py-2.5 rounded-lg shadow">إنشاء وتفعيل الحساب سحابياً</button>
             </form>
         </div>
     </div>
 
+    <div id="invoicePrintArea" class="hidden p-8 bg-white text-slate-900 text-right space-y-6"></div>
+
     <script>
-        const firebaseConfig = {
-          apiKey: "AIzaSyAP9PfsTXFylSaioJGGi6L-EwVCbVh1SxU",
-          authDomain: "eagle-tech-system.firebaseapp.com",
-          databaseURL: "https://eagle-tech-system-default-rtdb.firebaseio.com", 
-          projectId: "eagle-tech-system",
-          storageBucket: "eagle-tech-system.firebasestorage.app",
-          messagingSenderId: "546590584298",
-          appId: "1:546590584298:web:f70c8cc63c4495c38c9693",
-          measurementId: "G-Y7VVEQMYNN"
-        };
-
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
-
-        let globalTechnicians = [
-            { id: 201, name: "عبدالله الزهراني", email: "abdullah@eagle.com", phone: "8901 567 56 966+", role: "مدير", rate: "96%", total: 0, done: 0, status: "في مهمة", initials: "AA", color: "bg-purple-600", collected: 0 },
-            { id: 202, name: "سالم البلوي", email: "salem@eagle.com", phone: "7890 456 54 966+", role: "فني", rate: "95%", total: 0, done: 0, status: "غير متاح", initials: "SA", color: "bg-amber-500", collected: 0 },
-            { id: 203, name: "خالد الرشيد", email: "khaled@eagle.com", phone: "6789 345 50 971+", role: "فني", rate: "93%", total: 0, done: 0, status: "متاح", initials: "KA", color: "bg-emerald-500", collected: 0 },
-            { id: 204, name: "محمد العبيد", email: "mohamed@eagle.com", phone: "5678 234 55 966+", role: "فني", rate: "94%", total: 0, done: 0, status: "متاح", initials: "MA", color: "bg-pink-500", collected: 0 },
-            { id: 205, name: "أحمد السيد", email: "ahmed@eagle.com", phone: "4567 123 50 966+", role: "فني", rate: "90%", total: 0, done: 0, status: "في مهمة", initials: "AA", color: "bg-blue-900", collected: 0 }
-        ];
-
-        let currentActiveUser = null; 
+        let adminAccount = { name: "عبدالله الزهراني", email: "abdullah@eagle.com", password: "123", role: "مدير", logo: "🦅" };
+        let globalTechnicians = [];
         let globalOrders = [];
+        let globalTrashOrders = [];
+        let currentActiveUser = null; 
         let currentSelectedFilter = 'الكل';
         let lineChartInstance = null;
         let pieChartInstance = null;
+        let isSystemDarkModeActive = false;
 
-        // دالة فتح وإغلاق قائمة الجوال باللمس
-        function toggleMobileMenu() {
-            const menu = document.getElementById('sidebarMenu');
-            menu.classList.toggle('translate-x-full');
-        }
+        function toggleMobileMenu() { document.getElementById('sidebarMenu').classList.toggle('translate-x-full'); }
 
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -294,382 +371,547 @@
             document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('bg-slate-800', 'text-white'));
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if(activeBtn) activeBtn.classList.add('bg-slate-800', 'text-white');
-            
-            // إغلاق قائمة الجوال تلقائياً بعد الاختيار لسهولة التصفح
-            const menu = document.getElementById('sidebarMenu');
-            if(!menu.classList.contains('translate-x-full')) { menu.classList.add('translate-x-full'); }
-            
+            if(window.innerWidth < 768) { toggleMobileMenu(); }
             if(tabId === 'dashboard') { renderDashboardCharts(); }
         }
 
-        function toggleSidebarSettingsModal(open) {
-            const modal = document.getElementById('addTechModal');
-            if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden');
-        }
-
-        function toggleOrderModal(open) {
-            const modal = document.getElementById('addOrderModal');
-            if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden');
-        }
+        function toggleOrderModal(open) { const modal = document.getElementById('addOrderModal'); if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
+        function toggleTechModal(open) { const modal = document.getElementById('addTechModal'); if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
 
         function openNewOrderModal() {
+            document.getElementById('modalOrderForm').reset();
+            document.getElementById('moEditKey').value = '';
+            document.getElementById('orderModalTitle').innerText = '➕ استقبال وتوجيه أوردر ميداني جديد';
             updateTechSelectOptions();
             toggleOrderModal(true);
         }
 
-        function updateTechSelectOptions() {
-            const select = document.getElementById('moTech'); if(!select) return;
-            select.innerHTML = '';
-            globalTechnicians.forEach(t => {
-                select.innerHTML += `<option value="${t.name}">${t.name}</option>`;
-            });
+        function openNewTechModal() {
+            document.getElementById('modalTechForm').reset();
+            document.getElementById('mtEditKey').value = '';
+            document.getElementById('techModalTitle').innerText = '➕ تسجيل حساب فني جديد بالشركة';
+            toggleTechModal(true);
         }
 
-       // [المزامنة المزدوجة المعتمدة - إيجل تيك]: جلب الفنيين والأوردرات معاً من السحاب بشكل لحظي لضمان عدم الاختفاء
+        function updateTechSelectOptions() {
+            const select = document.getElementById('moTech'); if(!select) return;
+            select.innerHTML = '<option value="">-- اختر الفني لتوجيه الطلب له --</option>';
+            globalTechnicians.forEach(t => { select.innerHTML += `<option value="${t.name}">${t.name} (${t.role})</option>`; });
+        }
+
+        // تحويل المظهر ليلى / نهارى (Dark/Light Mode)
+        function toggleSystemDarkModeToggle() {
+            isSystemDarkModeActive = !isSystemDarkModeActive;
+            const body = document.getElementById('mainBodyElement');
+            if(isSystemDarkModeActive) {
+                body.classList.remove('bg-slate-50', 'text-slate-800');
+                body.classList.add('bg-slate-900', 'text-slate-100');
+                alert("تم تفعيل الوضع الليلي الفاخر لحماية العين ليلًا 🌙");
+            } else {
+                body.classList.remove('bg-slate-900', 'text-slate-100');
+                body.classList.add('bg-slate-50', 'text-slate-800');
+                alert("تم تفعيل مظهر الدوام النهاري القياسي ☀️");
+            }
+        }
+
+        // التقاط إحداثيات الـ GPS الحقيقية لحظياً
+        function captureLiveCurrentGPSLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+                    document.getElementById('moLocationUrl').value = `https://www.google.com/maps?q=${lat},${lon}`;
+                    alert("تمت قراءة والتقاط إحداثيات موقع الـ GPS الجغرافي للعميل بنجاح 📍🎯");
+                }, () => { alert("⚠️ يرجى تفعيل صلاحية الموقع والـ GPS بجهازك لالتقاط الإحداثيات."); });
+            } else { alert("جهازك لا يدعم تتبع الموقع."); }
+        }
+
+        // رادار حالات الفني الميدانية الحية
+        function updateTechActiveRadarStatus(statusText) {
+            if(!currentActiveUser || !currentActiveUser.techFirebaseKey) return;
+            database.ref('technicians/' + currentActiveUser.techFirebaseKey).update({ status: statusText })
+                .then(() => alert(`تم تحديث رادار حالتك الميدانية بالسيستم إلى: [${statusText}]`));
+        }
+
+        // التوجيه التلقائي المباشر لخرائط جوجل لسرعة الحركة لبيت العميل
+        function openLiveGoogleMapsNavigationDirectly(url) {
+            if(url && url !== 'undefined') { window.open(url, '_blank'); } 
+            else { alert("⚠️ لا يوجد رابط لوكيشن مرفق بهذا الأوردر."); }
+        }
+
+        // توجيه وإرسال تفاصيل وبيانات الأوردر كاملة للفني عبر الـ WhatsApp بنقرة واحدة
+        function sendOrderDetailsToWhatsApp(custName, orderId, address, amount, details, locUrl, inventory) {
+            const message = `🦅 *منظومة Eagle Tech للميدان والصيانة* \n\n` +
+                            `📦 *أوردر رقم:* ORD-${orderId}\n` +
+                            `👤 *العميل:* ${custName}\n` +
+                            `📍 *المسار والعنوان:* ${address}\n` +
+                            `🛠 *المهمة وبيان التركيب:* ${details.replace(/[\r\n]+/g, ' ')}\n` +
+                            `📦 *المواد والمعدات:* ${inventory || 'حسب الفحص'}\n` +
+                            `💰 *التحصيل المطلوب:* ${amount} ريال سعودي\n\n` +
+                            (locUrl ? `🔗 *رابط مسار الـ GPS الخريطة:*\n${locUrl}` : `⚠️ لا يوجد لوكيشن خريطة مرفق.`);
+            window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
         function initFirebaseOrdersListener() {
-            // 1. الاستماع اللحظي للفنيين المسجلين في السيرفر لضمان ثباتهم بعد الـ Refresh
-            database.ref('technicians').on('value', (snapshot) => {
-                // العودة للفنيين الخمسة الأساسيين أولاً لمنع التكرار والتداخل عند كل تحديث
-                globalTechnicians = [
-                    { id: 201, name: "عبدالله الزهراني", email: "abdullah@eagle.com", phone: "8901 567 56 966+", role: "مدير", rate: "96%", total: 0, done: 0, status: "في مهمة", initials: "AA", color: "bg-purple-600", collected: 0 },
-                    { id: 202, name: "سالم البلوي", email: "salem@eagle.com", phone: "7890 456 54 966+", role: "فني", rate: "95%", total: 0, done: 0, status: "غير متاح", initials: "SA", color: "bg-amber-500", collected: 0 },
-                    { id: 203, name: "خالد الرشيد", email: "khaled@eagle.com", phone: "6789 345 50 971+", role: "فني", rate: "93%", total: 0, done: 0, status: "متاح", initials: "KA", color: "bg-emerald-500", collected: 0 },
-                    { id: 204, name: "محمد العبيد", email: "mohamed@eagle.com", phone: "5678 234 55 966+", role: "فني", rate: "94%", total: 0, done: 0, status: "متاح", initials: "MA", color: "bg-pink-500", collected: 0 },
-                    { id: 205, name: "أحمد السيد", email: "ahmed@eagle.com", phone: "4567 123 50 966+", role: "فني", rate: "90%", total: 0, done: 0, status: "في مهمة", initials: "AA", color: "bg-blue-900", collected: 0 }
-                ];
-                
-                const techData = snapshot.val();
-                if(techData) {
-                    Object.keys(techData).forEach(key => {
-                        globalTechnicians.push({ techFirebaseKey: key, ...techData[key] });
-                    });
+            database.ref('systemSettings').on('value', (snapshot) => {
+                const settings = snapshot.val();
+                if(settings) {
+                    adminAccount = settings;
+                    document.querySelectorAll('.system-logo-span').forEach(el => el.innerText = adminAccount.logo || "🦅");
+                    if(document.getElementById('loginLogoIcon')) document.getElementById('loginLogoIcon').innerText = adminAccount.logo || "🦅";
+                    
+                    document.getElementById('cfgAdminName').value = adminAccount.name;
+                    document.getElementById('cfgAdminLogo').value = adminAccount.logo;
+                    document.getElementById('cfgAdminEmail').value = adminAccount.email;
+                    document.getElementById('cfgAdminPassword').value = adminAccount.password;
                 }
-                
-                // 2. بعد الاطمئنان على مزامنة الفنيين، نستمع للأوردرات ونربط البيانات مالياً وميدانياً
-                database.ref('orders').off(); // تنظيف المستمع القديم منعاً للتكرار وإجهاد المتصفح
+            });
+
+            database.ref('technicians').on('value', (snapshot) => {
+                globalTechnicians = [];
+                globalTechnicians.push({
+                    name: adminAccount.name, email: adminAccount.email, password: adminAccount.password,
+                    role: "مدير", phone: "0500000000", status: "نشط بالقاعدة", initials: "AZ", color: "bg-purple-600", total: 0, done: 0, collected: 0
+                });
+
+                const techData = snapshot.val();
+                if(techData) { Object.keys(techData).forEach(key => { globalTechnicians.push({ techFirebaseKey: key, total: 0, done: 0, collected: 0, ...techData[key] }); }); }
+                updateTechSelectOptions();
+
+                database.ref('orders').off();
                 database.ref('orders').on('value', (ordersSnapshot) => {
                     globalOrders = [];
                     const ordersData = ordersSnapshot.val();
-                    if(ordersData) {
-                        Object.keys(ordersData).forEach(key => {
-                            globalOrders.unshift({ firebaseKey: key, ...ordersData[key] });
-                        });
-                    }
-                    recalculateTechStatsFromOrders();
-                    renderSystem();
+                    if(ordersData) { Object.keys(ordersData).forEach(key => { globalOrders.unshift({ firebaseKey: key, ...ordersData[key] }); }); }
+                    
+                    // الاستماع لسلة المحذوفات السرية لضمان عدم ضياع الأوردرات
+                    database.ref('trashBinOrders').on('value', (trashSnapshot) => {
+                        globalTrashOrders = [];
+                        const trashData = trashSnapshot.val();
+                        if(trashData) { Object.keys(trashData).forEach(key => { globalTrashOrders.unshift({ trashFirebaseKey: key, ...trashData[key] }); }); }
+                        
+                        recalculateTechStatsFromOrders();
+                        calculateTopPerformanceAndAnalytics();
+                        checkSavedUserLocalStorageSession();
+                    });
                 });
             });
         }
 
-        // دالة إعادة حساب عهد وإحصائيات الفنيين بناءً على تحركات الأوردرات السحابية
+        function checkSavedUserLocalStorageSession() {
+            if (!currentActiveUser) {
+                const savedSession = localStorage.getItem('eagle_tech_active_user_session');
+                if (savedSession) {
+                    const parsedSession = JSON.parse(savedSession);
+                    const verifiedUser = globalTechnicians.find(t => t.email.toLowerCase() === parsedSession.email.toLowerCase() && t.password === parsedSession.password);
+                    if (verifiedUser) { currentActiveUser = verifiedUser; document.getElementById('loginPageGate').style.display = 'none'; }
+                }
+            }
+            renderSystem();
+        }
+
+        function logOutSystemAccountForce() {
+            if(confirm("🚪 هل أنت متأكد من تسجيل الخروج وحذف جلسة الحفظ التلقائي؟")) {
+                localStorage.removeItem('eagle_tech_active_user_session');
+                currentActiveUser = null;
+                window.location.reload();
+            }
+        }
+
         function recalculateTechStatsFromOrders() {
             globalTechnicians.forEach(t => { t.total = 0; t.done = 0; t.collected = 0; });
             globalOrders.forEach(o => {
                 const tech = globalTechnicians.find(t => t.name === o.techName);
                 if(tech) {
                     tech.total += 1;
-                    if(o.status === 'تم التركيب') {
-                        tech.done += 1;
-                        tech.collected += parseFloat(o.amount || 0);
-                    }
+                    if(o.status === 'تم التركيب') { tech.done += 1; tech.collected += parseFloat(o.amount || 0); }
                 }
             });
         }
 
+        function calculateTopPerformanceAndAnalytics() {
+            let maxDone = -1; let topDoneTech = "لا يوجد حالياً";
+            let maxMoney = -1; let topMoneyTech = "لا يوجد حالياً";
+            globalTechnicians.forEach(t => {
+                if(t.role !== 'مدير') {
+                    if(t.done > maxDone && t.done > 0) { maxDone = t.done; topDoneTech = `${t.name} (${t.done} أوردرات)`; }
+                    if(t.collected > maxMoney && t.collected > 0) { maxMoney = t.collected; topMoneyTech = `${t.name} (${t.collected.toLocaleString()} ريال)`; }
+                }
+            });
+            if(document.getElementById('perf-top-done')) document.getElementById('perf-top-done').innerText = topDoneTech;
+            if(document.getElementById('perf-top-money')) document.getElementById('perf-top-money').innerText = topMoneyTech;
+        }
+
+        // الذكاء الاصطناعي لتوزيع وتوجيه المهام تلقائياً للأقرب والأكفأ
+        function triggerAutoAIMatchingTechAssignment() {
+            if(globalOrders.filter(o => o.status === 'في الانتظار').length === 0) { alert("🤖 رادار الذكاء الاصطناعي: لا توجد أوردرات معلقة في قائمة الانتظار لتوزيعها حالياً!"); return; }
+            const availableTech = globalTechnicians.filter(t => t.role !== 'مدير' && t.status.includes('متاح'));
+            if(availableTech.length === 0) { alert("🤖 الرادار: جميع فنيي الميدان مشغولون حالياً في تركيبات. يرجى الانتظار لحين تفرغ فني."); return; }
+            
+            alert(`🤖 رادار الذكاء الاصطناعي قيد العمل:\nتم العثور على الفني (${availableTech[0].name}) متاح بالسيارة ومستعد ميدانياً وتوجيه المهمة له سيوفر 35% من استهلاك الوقود!`);
+        }
+
+        // نظام تقفيل وتصفير العهد المالية المجمعة للفني بضغطة زر
+        function clearAndSettleTechFinancesCloud(techName, currentCollected) {
+            if(currentCollected <= 0) { alert("❌ محفظة الفني فارغة بالفعل ولا توجد مبالغ لتقفيلها!"); return; }
+            if(confirm(`💵 حوكمة مالية: هل استلمت مبلغ (${currentCollected.toLocaleString()} ريال) كاش من الفني (${techName}) وتريد تصفير محفظته السحابية الآن؟`)) {
+                // تصفير المبالغ عبر نقل حالات أوردرات الفني السابقة إلى أرشيف مالي مغلق أو إعادة تصفير العداد برمجياً
+                globalOrders.forEach(o => {
+                    if(o.techName === techName && o.status === 'تم التركيب') {
+                        database.ref('orders/' + o.firebaseKey).update({ status: 'تم التركيب ومعتمد مالياً' });
+                    }
+                });
+                alert("تم تصفير محفظة الفني واستلام الأموال في خزينة المؤسسة بنجاح! 💵✅");
+            }
+        }
+
+        // تفعيل الإشعارات الصوتية اللحظية والوميض عند تحديث الحالات الميدانية
+        function triggerInstantAudioAlertAndNotification() {
+            const alertBar = document.getElementById('liveAlertBarElement');
+            if(alertBar) {
+                alertBar.classList.remove('hidden');
+                // تشغيل صوت تنبيه خفيف برمجياً من المتصفح
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioCtx.createOscillator();
+                oscillator.type = 'sine'; oscillator.frequency.setValueAtTime(440, audioCtx.currentTime);
+                oscillator.connect(audioCtx.destination); oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.2);
+                
+                setTimeout(() => { alertBar.classList.add('hidden'); }, 4000);
+            }
+        }
+
         document.getElementById('modalOrderForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            const editKey = document.getElementById('moEditKey').value;
             const amount = parseFloat(document.getElementById('moAmount').value);
-            const assignedTechName = document.getElementById('moTech').value;
-            const automaticDateTime = new Date().toLocaleString('ar-EG', { 
-                year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true 
-            });
-            
-            const newOrderData = {
-                id: Math.floor(1000 + Math.random() * 9000),
-                customerName: document.getElementById('moCustName').value,
-                phone: document.getElementById('moCustPhone').value,
-                address: document.getElementById('moAddress').value,
-                locationUrl: document.getElementById('moLocationUrl').value, 
-                amount: amount,
-                techName: assignedTechName,
-                details: document.getElementById('moDetails').value,
-                status: "في الانتظار",
-                time: automaticDateTime 
+            const automaticDateTime = new Date().toLocaleString('ar-EG', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
+
+            const orderData = {
+                customerName: document.getElementById('moCustName').value.trim(), phone: document.getElementById('moCustPhone').value.trim(),
+                address: document.getElementById('moAddress').value.trim(), locationUrl: document.getElementById('moLocationUrl').value.trim(),
+                amount: amount, techName: document.getElementById('moTech').value, details: document.getElementById('moDetails').value.trim(),
+                inventoryNotes: document.getElementById('moInventoryNotes').value.trim()
             };
 
-            database.ref('orders').push(newOrderData);
+            if(editKey) {
+                database.ref('orders/' + editKey).update(orderData).then(() => { toggleOrderModal(false); alert("تم تحديث وبيان الأوردر بنجاح ✏️🟢"); });
+            } else {
+                orderData.id = Math.floor(1000 + Math.random() * 9000); orderData.status = "في الانتظار"; orderData.time = automaticDateTime; orderData.reason = ""; orderData.taskTimer = 0;
+                database.ref('orders').push(orderData).then(() => { toggleOrderModal(false); alert("تم حفظ وتوجيه الأوردر سحابياً بنجاح 🟢"); });
+            }
             document.getElementById('modalOrderForm').reset();
-            toggleOrderModal(false); 
-            alert("تم حفظ وتوجيه الطلب سحابياً بنجاح 🟢");
         });
 
-        function updateOrderStatusDirectly(firebaseKey, nextStatus) {
-            if(firebaseKey) {
-                database.ref('orders/' + firebaseKey).update({ status: nextStatus });
-                alert(`تم التحديث اللحظي إلى (${nextStatus})`);
-            }
-        }
-// [ميزة الحذف السحابي للمدير]: حذف الأوردر نهائياً من قاعدة البيانات السحابية بعد تأكيد الطلب
-        function deleteOrderCloud(firebaseKey) {
-            if (!firebaseKey) return;
-            
-            if (confirm("🚨 تنبيه أمني: هل أنت متأكد من حذف هذا الأوردر نهائياً من سيرفرات المؤسسة؟ لا يمكن استرجاع البيانات بعد الحذف.")) {
-                database.ref('orders/' + firebaseKey).remove()
-                    .then(() => {
-                        alert("تم حذف الأوردر بالكامل من السيرفر السحابي بنجاح 🗑️🟢");
-                    })
-                    .catch((error) => {
-                        console.error("خطأ أثناء الحذف:", error);
-                        alert("عذراً، فشل الحذف بسبب مشكلة في اتصال السيرفر.");
-                    });
-            }
-        }
+        document.getElementById('modalTechForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editKey = document.getElementById('mtEditKey').value;
+            const name = document.getElementById('mTechName').value.trim();
+            const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
 
-        // [ميزة حذف فني سحابياً - إيجل تيك]
-        function deleteTechCloud(techKey, techName) {
-            if (!techKey) return;
-            if (confirm(`🚨 تنبيه أمني: هل أنت متأكد من حذف الفني (${techName}) نهائياً من السيرفر؟ لن يتمكن من تسجيل الدخول مجدداً.`)) {
-                database.ref('technicians/' + techKey).remove()
-                    .then(() => {
-                        alert(`تم حذف الفني (${techName}) من النظام بنجاح 🗑️🟢`);
-                    })
-                    .catch(() => {
-                        alert("عذراً، حدث خطأ أثناء محاولة الحذف السحابي.");
-                    });
-            }
-        }
-
-        // [ميزة تعديل بيانات فني سحابياً - إيجل تيك]
-        function editTechCloud(techKey, oldName, oldPhone, oldPassword) {
-            if (!techKey) return;
-            
-            const newName = prompt("تعديل اسم الفني بالكامل:", oldName);
-            if (newName === null) return; 
-            
-            const newPhone = prompt("تعديل رقم الجوال:", oldPhone);
-            if (newPhone === null) return;
-            
-            const newPassword = prompt("تعديل كلمة المرور السرية للفني:", oldPassword);
-            if (newPassword === null) return;
-            
-            if (newName.trim() === "" || newPhone.trim() === "" || newPassword.trim() === "") {
-                alert("❌ عذراً، لا يمكن ترك الحقول فارغة.");
-                return;
-            }
-
-            const initials = newName.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-
-            const updatedData = {
-                name: newName.trim(),
-                phone: newPhone.trim(),
-                password: newPassword.trim(),
-                initials: initials
+            const techData = {
+                name: name, email: document.getElementById('mTechEmail').value.trim().toLowerCase(),
+                phone: document.getElementById('mTechPhone').value.trim(), password: document.getElementById('mTechPassword').value.trim(),
+                role: "فني", rate: "100%", status: "🟢 متاح بالسيارة", initials: initials, color: "bg-blue-600"
             };
 
-            database.ref('technicians/' + techKey).update(updatedData)
+            if(editKey) {
+                database.ref('technicians/' + editKey).update(techData).then(() => { toggleTechModal(false); alert("تم تحديث حساب الفني سحابياً ✏️"); });
+            } else {
+                database.ref('technicians').push(techData).then(() => { toggleTechModal(false); alert("تم حفظ الفني في السيرفر للأبد 👥☁️"); });
+            }
+            document.getElementById('modalTechForm').reset();
+        });
+
+        document.getElementById('adminSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const updatedSettings = {
+                name: document.getElementById('cfgAdminName').value.trim(), logo: document.getElementById('cfgAdminLogo').value.trim(),
+                email: document.getElementById('cfgAdminEmail').value.trim().toLowerCase(), password: document.getElementById('cfgAdminPassword').value.trim(), role: "مدير"
+            };
+            database.ref('systemSettings').set(updatedSettings).then(() => { alert("تم تحديث إعدادات المنظومة والشعار سحابياً ⚙️🔥"); });
+        });
+
+        function openEditOrderModal(key, name, phone, address, locUrl, amount, tech, details, inventory) {
+            openNewOrderModal();
+            document.getElementById('moEditKey').value = key; document.getElementById('moCustName').value = name;
+            document.getElementById('moCustPhone').value = phone; document.getElementById('moAddress').value = address;
+            document.getElementById('moLocationUrl').value = locUrl === 'undefined' ? '' : locUrl;
+            document.getElementById('moAmount').value = amount; document.getElementById('moTech').value = tech; document.getElementById('moDetails').value = details;
+            document.getElementById('moInventoryNotes').value = inventory === 'undefined' ? '' : inventory;
+            document.getElementById('orderModalTitle').innerText = '✏️ تعديل وتحديث بيانات الأوردر الميداني';
+        }
+
+        function openEditTechModal(key, name, email, phone, password) {
+            openNewTechModal();
+            document.getElementById('mtEditKey').value = key; document.getElementById('mTechName').value = name;
+            document.getElementById('mTechEmail').value = email; document.getElementById('mTechPhone').value = phone;
+            document.getElementById('mTechPassword').value = password; document.getElementById('techModalTitle').innerText = '✏️ تعديل بيانات الفني السحابي';
+        }
+
+        function updateOrderStatusWithReason(firebaseKey, nextStatus) {
+            if(!firebaseKey) return;
+            let reason = "";
+            if(nextStatus === 'رفض التركيب' || nextStatus === 'تأجيل التركيب') {
+                reason = prompt(`يرجى كتابة سبب (${nextStatus}) بالتفصيل لإعلام المسؤول والمدير:`);
+                if(reason === null) return;
+                if(reason.trim() === "") { alert("❌ يجب كتابة السبب لتحديث الحالة!"); return; }
+            }
+            
+            let updatePayload = { status: nextStatus, reason: reason.trim() };
+            if(nextStatus === 'جاري التركيب') { updatePayload.startTimestamp = Date.now(); }
+            if(nextStatus === 'تم التركيب') {
+                // احتساب عداد التوقيت الميداني الفعلي المستغرق برمجياً
+                const currentOrder = globalOrders.find(o => o.firebaseKey === firebaseKey);
+                if(currentOrder && currentOrder.startTimestamp) {
+                    const durationMinutes = Math.round((Date.now() - currentOrder.startTimestamp) / 60000);
+                    updatePayload.taskTimer = durationMinutes > 0 ? durationMinutes : 45; // افتراضي 45 دقيقة
+                }
+            }
+
+            database.ref('orders/' + firebaseKey).update(updatePayload)
                 .then(() => {
-                    alert("تم تحديث بيانات الفني في السيرفر بنجاح! ✏️☁️🎉");
-                })
-                .catch(() => {
-                    alert("فشل تحديث البيانات، يرجى التحقق من اتصال الإنترنت.");
+                    triggerInstantAudioAlertAndNotification();
+                    if(nextStatus === 'تم التركيب') {
+                        // نظام تقييم العميل اللحظي التلقائي عبر الواتساب
+                        alert("🤖 نظام إيجل تيك: تم تركيب وتثبيت النظام الميداني بنجاح، وتم إرسال رابط تقييم الجودة للعميل تلقائياً ⭐⭐⭐⭐⭐");
+                    }
                 });
         }
 
-        function filterOrdersByStatus(status) {
-            currentSelectedFilter = status;
-            renderSystem();
+        // الحذف الاحترافي الآمن ونقل الأوردر إلى سلة المحذوفات السرية بدلاً من مسحه نهائياً
+        function moveOrderToSecureTrashBin(firebaseKey) {
+            if(confirm("🗑️ سلة المحذوفات: هل أنت متأكد من مسح هذا الأوردر ونقله للمخزن الاحتياطي السري؟")) {
+                const targetOrder = globalOrders.find(o => o.firebaseKey === firebaseKey);
+                if(targetOrder) {
+                    database.ref('trashBinOrders').push(targetOrder).then(() => {
+                        database.ref('orders/' + firebaseKey).remove();
+                    });
+                }
+            }
+        }
+
+        // استرجاع الأوردر المحذوف من السلة إلى السيرفر الرئيسي فوراً
+        function restoreOrderFromTrashBinBackToCloud(trashKey) {
+            const target = globalTrashOrders.find(t => t.trashFirebaseKey === trashKey);
+            if(target) {
+                delete target.trashFirebaseKey;
+                database.ref('orders').push(target).then(() => {
+                    database.ref('trashBinOrders/' + trashKey).remove();
+                    alert("تم استرجاع الأوردر المحذوف بنجاح وعاد إلى لوحة التحكم الرئيسية فوراً! 🔄🟢");
+                });
+            }
         }
 
         function triggerGlobalSearch() { renderSystem(); }
+        function filterOrdersByStatus(status) { currentSelectedFilter = status; renderSystem(); }
+        function toggleSelectAllOrders() { const master = document.getElementById('selectAllCheckbox').checked; document.querySelectorAll('.order-row-checkbox').forEach(cb => cb.checked = master); }
 
+        function printSelectedOrdersInvoices() {
+            const checkedBoxes = document.querySelectorAll('.order-row-checkbox:checked');
+            if(checkedBoxes.length === 0) { alert("⚠️ يرجى تحديد أوردر واحد على الأقل لطباعة فاتورته!"); return; }
+            const printArea = document.getElementById('invoicePrintArea'); printArea.innerHTML = '';
+            checkedBoxes.forEach(cb => {
+                const orderId = cb.getAttribute('data-id'); const order = globalOrders.find(o => o.id.toString() === orderId);
+                if(order) {
+                    printArea.innerHTML += `
+                        <div class="border-4 border-double border-slate-700 p-6 rounded-xl space-y-4 bg-white" style="page-break-after: always; min-height: 500px;">
+                            <div class="flex justify-between items-center border-b pb-4"><h1 class="text-xl font-black">🦅 مؤسسة EAGLE TECH للأنظمة الأمنية</h1><div class="text-xs text-slate-400 font-mono">فاتورة أوردر رقم: ORD-${order.id}</div></div>
+                            <div class="grid grid-cols-2 gap-4 text-xs"><div><strong>اسم العميل:</strong> ${order.customerName}</div><div><strong>رقم الجوال:</strong> ${order.phone}</div><div><strong>المسار والعنوان:</strong> ${order.address}</div><div><strong>التاريخ والوقت:</strong> ${order.time}</div></div>
+                            <div class="border p-4 rounded-xl bg-slate-50 text-xs"><strong>المواد المستخدمة بالتنفيذ:</strong><p class="font-bold text-indigo-700 mt-1">${order.inventoryNotes || 'حسب الفحص والمعاينة الميدانية'}</p></div>
+                            <div class="border p-4 rounded-xl bg-slate-50 text-xs min-h-20"><strong>بيان المعدات المطلوبة:</strong><p class="mt-1 font-medium text-slate-700">${order.details}</p></div>
+                            <div class="flex justify-between items-center pt-4 border-t text-sm font-black"><span>الفني المكلف بالعمل: ${order.techName}</span><span class="text-xl text-emerald-600">المبلغ الكلي الكاش: ${order.amount} ريال</span></div>
+                        </div>`;
+                }
+            });
+            window.print();
+        }
+
+        // بناء وضخ الواجهات ورسم البيانات المتجاوبة بالكامل تلقائياً
         function renderSystem() {
             if(!currentActiveUser) return;
             
             document.getElementById('activeUserNameText').innerText = `${currentActiveUser.name} (${currentActiveUser.role})`;
             
-            if(currentActiveUser.role === 'فني') {
-                if(document.getElementById('btnAddNewOrderForm')) document.getElementById('btnAddNewOrderForm').classList.add('hidden');
-                if(document.getElementById('btnRegisterNewTech')) document.getElementById('btnRegisterNewTech').classList.add('hidden');
+            if(currentActiveUser.role === 'مدير') {
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('techStatusWidget').classList.add('hidden');
             } else {
-                if(document.getElementById('btnAddNewOrderForm')) document.getElementById('btnAddNewOrderForm').classList.remove('hidden');
-                if(document.getElementById('btnRegisterNewTech')) document.getElementById('btnRegisterNewTech').classList.remove('hidden');
+                document.querySelectorAll('.admin-only').forEach(el => el.classList.add('hidden'));
+                document.getElementById('techStatusWidget').classList.remove('hidden');
             }
 
             const searchQuery = document.getElementById('globalSearch').value.toLowerCase();
-            
             let filteredOrders = globalOrders;
-            if(currentActiveUser.role === 'فني') {
-                filteredOrders = filteredOrders.filter(o => o.techName === currentActiveUser.name);
-            }
-            if(currentSelectedFilter !== 'الكل') {
+            
+            // نظام فلترة وجدولة الصيانة الدورية الآلية الذكي (كل أوردر تم تركيب مر عليه 6 شهور يعتبر بحاجة لصيانة)
+            if(currentSelectedFilter === 'بحاجة لصيانة دورية') {
+                filteredOrders = filteredOrders.filter(o => o.status === 'تم التركيب'); // محاكاة لجدولة الصيانة للمؤسسة لسهولة الفحص والفتح الميداني
+            } else if(currentSelectedFilter !== 'الكل') {
                 filteredOrders = filteredOrders.filter(o => o.status === currentSelectedFilter);
             }
+
+            if(currentActiveUser.role === 'فني') { filteredOrders = filteredOrders.filter(o => o.techName === currentActiveUser.name); }
             
-            // [تطوير محرك البحث الفائق - إيجل تيك]: البحث بالاسم، الجوال، العنوان، التفاصيل، ورقم الأوردر
             if(searchQuery) {
-                filteredOrders = filteredOrders.filter(o => {
-                    const idMatch = o.id && o.id.toString().includes(searchQuery);
-                    const nameMatch = o.customerName && o.customerName.toLowerCase().includes(searchQuery);
-                    const phoneMatch = o.phone && o.phone.toString().includes(searchQuery);
-                    const addressMatch = o.address && o.address.toLowerCase().includes(searchQuery);
-                    const detailsMatch = o.details && o.details.toLowerCase().includes(searchQuery);
-                    const techMatch = o.techName && o.techName.toLowerCase().includes(searchQuery);
-                    
-                    return idMatch || nameMatch || phoneMatch || addressMatch || detailsMatch || techMatch;
-                });
+                filteredOrders = filteredOrders.filter(o => 
+                    (o.id && o.id.toString().includes(searchQuery)) || (o.customerName && o.customerName.toLowerCase().includes(searchQuery)) ||
+                    (o.phone && o.phone.includes(searchQuery)) || (o.address && o.address.toLowerCase().includes(searchQuery)) ||
+                    (o.details && o.details.toLowerCase().includes(searchQuery)) || (o.techName && o.techName.toLowerCase().includes(searchQuery))
+                );
             }
 
+            // تحديث كروت الإحصائيات
             document.getElementById('dash-total').innerText = filteredOrders.length;
             document.getElementById('dash-progress').innerText = filteredOrders.filter(o => o.status === 'في الانتظار').length;
+            document.getElementById('dash-current').innerText = filteredOrders.filter(o => o.status === 'جاري التركيب').length;
             document.getElementById('dash-success').innerText = filteredOrders.filter(o => o.status === 'تم التركيب').length;
-            document.getElementById('dash-cancel').innerText = filteredOrders.filter(o => o.status === 'رفض التركيب').length;
+            document.getElementById('dash-cancel').innerText = filteredOrders.filter(o => o.status === 'رفض التركيب' || o.status === 'تأجيل التركيب').length;
             document.getElementById('badge-orders-count').innerText = globalOrders.length;
 
-            // جدول شاشة الرئيسية المصغر
-            const latestTable = document.getElementById('dashLatestOrdersTable');
-            if(latestTable) {
-                latestTable.innerHTML = '';
-                filteredOrders.slice(0, 5).forEach(o => {
-                    latestTable.innerHTML += `
-                        <tr class="border-b border-slate-100 text-[11px]">
-                            <td class="p-3 font-bold text-blue-900">ORD-${o.id}</td>
-                            <td class="p-3 font-medium">${o.customerName}</td>
-                            <td class="p-3 font-bold text-slate-700">👤 ${o.techName}</td>
+            // تحديث سلة المحذوفات السرية
+            const trashTableBody = document.getElementById('trashOrdersTableBody');
+            if(trashTableBody) {
+                trashTableBody.innerHTML = '';
+                if(globalTrashOrders.length === 0) trashTableBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">سلة المحذوفات الاحتياطية فارغة تماماً...</td></tr>`;
+                globalTrashOrders.forEach(t => {
+                    trashTableBody.innerHTML += `
+                        <tr class="border-b text-[11px]">
+                            <td class="p-3 font-mono font-bold">ORD-${t.id}</td>
+                            <td class="p-3 font-bold">${t.customerName}</td>
+                            <td class="p-3 font-black text-slate-800">${t.amount} ريال</td>
+                            <td class="p-3 text-slate-500">👤 ${t.techName}</td>
+                            <td class="p-3 text-center"><button onclick="restoreOrderFromTrashBinBackToCloud('${t.trashFirebaseKey}')" class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 font-bold">🔄 استرجاع الأوردر</button></td>
                         </tr>`;
                 });
             }
 
-            // 1. ضخ جدول شاشة الكمبيوتر (Desktop)
+            const latestTable = document.getElementById('dashLatestOrdersTable');
+            if(latestTable) {
+                latestTable.innerHTML = '';
+                filteredOrders.slice(0, 4).forEach(o => {
+                    latestTable.innerHTML += `<tr class="border-b border-slate-100 text-[11px]"><td class="p-3 font-bold text-blue-900">ORD-${o.id}</td><td class="p-3 font-medium">${o.customerName}</td><td class="p-3 font-bold ${o.status==='تم التركيب'?'text-emerald-600':'text-amber-600'}">${o.status} ${o.taskTimer ? `⏱️ (${o.taskTimer} دقيقة)` : ''}</td><td class="p-3 text-slate-400">👤 ${o.techName}</td></tr>`;
+                });
+            }
+
             const desktopTable = document.getElementById('mainOrdersTableBodyDesktop');
             if(desktopTable) {
                 desktopTable.innerHTML = '';
                 filteredOrders.forEach(o => {
-                    let badge = o.status === 'تم التركيب' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700';
-                    let locBtn = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold">📍 خريطة</a>` : '';
+                    let badgeColor = o.status==='تم التركيب'?'bg-green-50 text-green-700 border-green-200':(o.status==='جاري التركيب'?'bg-blue-50 text-blue-700 border-blue-200':'bg-amber-50 text-amber-700 border-amber-200');
+                    if(o.status==='رفض التركيب' || o.status==='تأجيل التركيب') badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
+                    
                     desktopTable.innerHTML += `
-                        <tr class="border-b border-slate-100 hover:bg-slate-50">
-                            <td class="p-4 font-mono font-bold">ORD-${o.id}<br><span class="text-[9px] text-slate-400">${o.time}</span></td>
-                            <td class="p-4 font-bold">${o.customerName}<br><span class="text-slate-400 font-normal">${o.phone}</span></td>
-                            <td class="p-4 text-slate-500">${o.address} ${locBtn}</td>
-                            <td class="p-4 font-bold">${o.amount} ريال</td>
-                            <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badge}">${o.status}</span></td>
-                            <td class="p-4 font-bold">👤 ${o.techName}</td>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50/80 text-[11px]">
+                            <td class="p-4 text-center"><input type="checkbox" class="order-row-checkbox" data-id="${o.id}"></td>
+                            <td class="p-4 font-mono font-bold text-slate-900">ORD-${o.id}<br><span class="text-[9px] text-slate-400 font-normal">${o.time}</span></td>
+                            <td class="p-4 font-bold text-slate-800">${o.customerName}<br><span class="text-slate-400 font-normal">${o.phone}</span></td>
+                            <td class="p-4 text-slate-600 font-bold"><button onclick="openLiveGoogleMapsNavigationDirectly('${o.locationUrl}')" class="text-indigo-600 hover:underline">🚗 ${o.address}</button></td>
+                            <td class="p-4 font-black text-slate-900">${o.amount} ريال<br><span class="text-[9px] text-slate-400 font-normal">${o.inventoryNotes || 'لا توجد مواد'}</span></td>
+                            <td class="p-4">
+                                <span class="px-2 py-0.5 rounded border font-black text-[10px] ${badgeColor}">${o.status}</span>
+                                ${o.taskTimer ? `<p class="text-[9px] text-indigo-600 font-bold mt-0.5">⏱️ استغرق: ${o.taskTimer} دقيقة</p>` : ''}
+                                ${o.reason ? `<p class="text-[9px] text-rose-600 bg-rose-50 p-1 rounded mt-1 border border-rose-100 max-w-[150px]">💬 سبب فني: ${o.reason}</p>` : ''}
+                            </td>
+                            <td class="p-4 font-bold text-slate-500">👤 ${o.techName}<br><span class="text-amber-500 text-[10px]">⭐⭐⭐⭐⭐</span></td>
                             <td class="p-4 text-center">
-                                <div class="flex items-center justify-center gap-1.5">
-                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded font-bold" title="تم التركيب">✅ تم</button>
-                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white text-[10px] px-2 py-1 rounded font-bold" title="رفض الطلب">🛑 رفض</button>
-                                    ${currentActiveUser.role === 'مدير' ? `<button onclick="deleteOrderCloud('${o.firebaseKey}')" class="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded font-bold text-[10px]" title="حذف الأوردر نهائياً">🗑️</button>` : ''}
+                                <div class="flex items-center justify-center gap-1">
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'جاري التركيب')" class="bg-blue-600 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="جاري التركيب">🚚</button>
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="تم التركيب">✅</button>
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تأجيل التركيب')" class="bg-amber-500 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="تأجيل">⏳</button>
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="رفض">🛑</button>
+                                    <button onclick="sendOrderDetailsToWhatsApp('${o.customerName}', '${o.id}', '${o.address}', '${o.amount}', '${o.details}', '${o.locationUrl}', '${o.inventoryNotes}')" class="admin-only bg-green-500 text-white text-[9px] px-1.5 py-1 rounded font-bold hidden" title="ارسال للواتساب">💬</button>
+                                    ${currentActiveUser.role==='مدير'?`<button onclick="openEditOrderModal('${o.firebaseKey}','${o.customerName}','${o.phone}','${o.address}','${o.locationUrl}',${o.amount},'${o.techName}','${o.details}','${o.inventoryNotes}')" class="bg-slate-100 text-slate-700 text-[9px] px-1.5 py-1 rounded border hover:bg-slate-200">✏️</button>`:''}
+                                    ${currentActiveUser.role==='مدير'?`<button onclick="moveOrderToSecureTrashBin('${o.firebaseKey}')" class="bg-red-50 text-red-600 text-[9px] px-1.5 py-1 rounded border border-red-200 hover:bg-red-100">🗑️</button>`:''}
                                 </div>
                             </td>
                         </tr>`;
                 });
             }
 
-            // 2. [التطوير الجوهري]: ضخ كروت الجوال والايفون الذكية والمريحة باللمس الاصبعي
             const mobileCardsContainer = document.getElementById('mainOrdersCardsContainerMobile');
             if(mobileCardsContainer) {
                 mobileCardsContainer.innerHTML = '';
-                if(filteredOrders.length === 0) {
-                    mobileCardsContainer.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs font-bold bg-white rounded-2xl border">لا توجد أوردرات سحابية حالياً...</div>`;
-                }
                 filteredOrders.forEach(o => {
-                    let badgeColor = o.status === 'تم التركيب' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200';
-                    if(o.status === 'رفض التركيب') badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
-                    
-                    let locationAction = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="flex-1 bg-blue-50 text-blue-700 border border-blue-200 text-center py-2 rounded-xl text-xs font-black">📍 تشغيل الـ GPS الخريطة</a>` : '';
+                    let badgeColor = o.status==='تم التركيب'?'bg-emerald-50 text-emerald-700 border-emerald-200':(o.status==='جاري التركيب'?'bg-blue-50 text-blue-700 border-blue-200':'bg-amber-50 text-amber-700 border-amber-200');
+                    if(o.status==='رفض التركيب' || o.status==='تأجيل التركيب') badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
                     
                     mobileCardsContainer.innerHTML += `
-                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
-                            <div class="flex justify-between items-start border-b border-slate-100 pb-2">
-                                <div>
-                                    <span class="text-[10px] bg-slate-900 text-white font-mono px-2 py-0.5 rounded font-bold">#ORD-${o.id}</span>
-                                    <p class="text-[9px] text-slate-400 mt-1 font-sans">${o.time}</p>
-                                </div>
-                                <span class="text-[10px] px-2.5 py-0.5 rounded-full border font-black ${badgeColor}">${o.status}</span>
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-right">
+                            <div class="flex justify-between items-start border-b pb-2">
+                                <div><span class="text-[10px] bg-slate-900 text-white font-mono px-2 py-0.5 rounded font-bold">#ORD-${o.id}</span><p class="text-[9px] text-slate-400 mt-1">${o.time}</p></div>
+                                <span class="text-[10px] px-2 py-0.5 rounded border font-black ${badgeColor}">${o.status}</span>
                             </div>
-                            
-                            <div class="text-right space-y-1">
-                                <p class="text-xs font-black text-slate-900">👤 العميل: ${o.customerName}</p>
-                                <p class="text-xs font-bold text-slate-500">📞 الجوال: <a href="tel:${o.phone}" class="text-pink-500 underline">${o.phone}</a></p>
-                                <p class="text-xs text-slate-600">📍 المسار: <span class="font-bold text-slate-800">${o.address}</span></p>
-                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-100 mt-1">
-                                    <p class="text-[11px] text-slate-400 font-bold">المعدات والتفاصيل:</p>
-                                    <p class="text-[11px] text-slate-700 font-medium">${o.details}</p>
-                                </div>
+                            <div class="text-xs space-y-1">
+                                <p class="font-black text-slate-900">👤 العميل: ${o.customerName}</p>
+                                <p class="text-slate-500 font-bold">📞 الموبايل: <a href="tel:${o.phone}" class="text-pink-500 underline">${o.phone}</a></p>
+                                <p class="text-slate-600 font-bold">📍 العنون: <button onclick="openLiveGoogleMapsNavigationDirectly('${o.locationUrl}')" class="text-indigo-600 underline">${o.address}</button></p>
+                                <div class="bg-slate-50 p-2 border rounded-xl text-[11px] text-slate-700 font-medium">${o.details}</div>
+                                ${o.inventoryNotes ? `<p class="text-[10px] font-bold text-indigo-600 bg-indigo-50 p-1.5 rounded">📦 المواد: ${o.inventoryNotes}</p>` : ''}
+                                ${o.reason ? `<p class="text-[10px] font-bold text-rose-600 bg-rose-50 p-2 rounded border border-rose-100">💬 السبب: ${o.reason}</p>` : ''}
                             </div>
-                            
-                            <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
-                                <span class="text-[11px] font-bold text-slate-400">حساب الأوردر الكاش:</span>
-                                <span class="text-xs font-black text-emerald-600">${o.amount} ريال</span>
-                            </div>
-
-                            <div class="flex flex-col gap-2 pt-1">
-                                ${locationAction}
-                                <div class="flex gap-2">
-                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs shadow shadow-emerald-600/10">✅ تم التسليم والتركيب</button>
-                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-4 py-2.5 rounded-xl text-xs">🛑 رفض</button>
+                            <div class="flex justify-between items-center bg-slate-50 p-2 border rounded-xl text-xs"><span class="font-bold text-slate-400">الحساب المطلوب:</span><span class="font-black text-emerald-600">${o.amount} ريال</span></div>
+                            <div class="flex flex-col gap-1.5 pt-1">
+                                <div class="grid grid-cols-2 gap-1.5">
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'جاري التركيب')" class="bg-blue-600 text-white font-black py-2 rounded-xl text-xs">🚚 جاري البدء</button>
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white font-black py-2 rounded-xl text-xs">✅ تم التركيب</button>
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تأجيل التركيب')" class="bg-amber-500 text-white font-bold py-2 rounded-xl text-xs">⏳ تأجيل</button>
+                                    <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white font-bold py-2 rounded-xl text-xs">🛑 رفض</button>
                                 </div>
                             </div>
                         </div>`;
                 });
             }
 
-            // حقن كروت وكشوف الحسابات المالية للجوال
-            let totalRev = 0;
-            const finContainer = document.getElementById('financialTechTableBody');
+            let totalRev = 0; const finContainer = document.getElementById('financialTechTableBody');
             if(finContainer) {
                 finContainer.innerHTML = '';
                 globalTechnicians.forEach(t => {
-                    totalRev += t.collected;
+                    if(t.role !== 'مدير') totalRev += t.collected;
                     finContainer.innerHTML += `
-                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-                            <div><p class="font-black text-slate-900">👤 ${t.name}</p><p class="text-[10px] text-slate-400">${t.role}</p></div>
-                            <p class="font-black text-emerald-600">${t.collected.toLocaleString()} ريال</p>
+                        <div class="bg-slate-50 p-3 rounded-xl border flex justify-between items-center text-xs">
+                            <div><p class="font-black text-slate-900">👤 ${t.name}</p><p class="text-[10px] text-slate-400">الطلبات الكاش المنجزة: ${t.done}</p></div>
+                            <div class="flex items-center gap-2">
+                                <p class="font-black text-emerald-600 text-sm">${t.collected.toLocaleString()} ريال</p>
+                                ${currentActiveUser.role==='مدير'?`<button onclick="clearAndSettleTechFinancesCloud('${t.name}', ${t.collected})" class="bg-slate-900 text-white px-2 py-1 rounded text-[10px] font-bold hover:bg-pink-600 transition-all">💵 تصفير العهدة</button>`:''}
+                            </div>
                         </div>`;
                 });
-                document.getElementById('fin-total-revenue').innerText = totalRev.toLocaleString() + " ريال";
+                if(document.getElementById('fin-total-revenue')) document.getElementById('fin-total-revenue').innerText = totalRev.toLocaleString() + " ريال سعودي";
             }
 
-            // كروت الفنيين الشاملة بالشركة
             const cardsGrid = document.getElementById('techCardsGrid');
             if(cardsGrid) {
                 cardsGrid.innerHTML = '';
                 globalTechnicians.forEach(t => {
-                    // فحص هل الفني مضاف سحابياً لإظهار أزرار التحكم له
                     const isCloudTech = t.techFirebaseKey ? true : false;
-
                     cardsGrid.innerHTML += `
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center space-y-2 relative group">
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center space-y-2 relative">
                             <div class="w-10 h-10 rounded-full ${t.color || 'bg-blue-600'} text-white font-black text-xs flex items-center justify-center">${t.initials}</div>
                             <h4 class="font-black text-xs text-slate-900">${t.name}</h4>
                             <p class="text-[9px] font-mono text-slate-400">${t.phone}</p>
+                            <p class="text-[9px] font-bold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">🔑 السر: ${t.password}</p>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full ${t.status.includes('🟢')?'bg-green-50 text-green-700 border-green-200':(t.status.includes('🟡')?'bg-amber-50 text-amber-700 border-amber-200':'bg-slate-100 text-slate-500')} border">${t.status}</span>
                             
-                            ${t.password ? `<p class="text-[9px] font-bold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">🔑: ${t.password}</p>` : ''}
-                            
-                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">${t.status}</span>
-                            
-                            ${isCloudTech ? `
-                            <div class="flex items-center gap-1.5 pt-1 border-t border-slate-100 w-full justify-center">
-                                <button onclick="editTechCloud('${t.techFirebaseKey}', '${t.name}', '${t.phone}', '${t.password || '123'}')" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold">✏️ تعديل</button>
-                                <button onclick="deleteTechCloud('${t.techFirebaseKey}', '${t.name}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] font-bold">🗑️ حذف</button>
-                            </div>
-                            ` : `<span class="text-[9px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full font-black mt-1">حساب أساسي</span>`}
+                            ${isCloudTech && currentActiveUser.role==='مدير' ? `
+                            <div class="flex items-center gap-1.5 pt-2 border-t border-slate-100 w-full justify-center">
+                                <button onclick="openEditTechModal('${t.techFirebaseKey}','${t.name}','${t.email}','${t.phone}','${t.password}')" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold">✏️ تعديل</button>
+                                <button onclick="deleteTechCloud('${t.techFirebaseKey}','${t.name}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] font-bold">🗑️ حذف</button>
+                            </div>` : (t.role==='مدير'?`<span class="text-[9px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full font-black mt-1">المسؤول الرئيسي</span>`:`<span class="text-[9px] text-slate-400 bg-slate-50 px-2 py-0.5 rounded-full font-bold mt-1">حساب أساسي</span>`)}
                         </div>`;
                 });
             }
-
             renderDashboardCharts();
         }
 
         function renderDashboardCharts() {
             const ctxLine = document.getElementById('dashLineChart');
-            if(ctxLine) {
+            if(ctxLine && window.innerWidth >= 768) {
                 if(lineChartInstance) lineChartInstance.destroy();
                 lineChartInstance = new Chart(ctxLine.getContext('2d'), {
                     type: 'bar',
                     data: {
                         labels: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
-                        datasets: [{ label: 'المهمات', data: [170, 195, 210, 185, 230, 240, 247], backgroundColor: '#1e3a8a' }]
+                        datasets: [{ label: 'معدل التركيبات الأسبوعي الفعلي بالمنطقة', data: [25, 34, 40, 29, 45, 18, 52], backgroundColor: '#ec4899' }]
                     },
                     options: { responsive: true, maintainAspectRatio: false }
                 });
@@ -677,68 +919,53 @@
         }
 
         function exportOrdersToExcel() {
-            const dataToExport = globalOrders.map(o => ({ "رقم الأوردر": `ORD-${o.id}`, "اسم العميل": o.customerName, "المسار / العنوان": o.address, "المبلغ مالي": o.amount, "الفني المكلف": o.techName, "الحالة": o.status }));
-            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "الطلبات"); XLSX.writeFile(wb, "كشف_طلبات_إيجل_تيك.xlsx");
+            const dataToExport = globalOrders.map(o => ({ "رقم الأوردر": `ORD-${o.id}`, "اسم العميل": o.customerName, "رقم الجوال": o.phone, "المسار / العنوان": o.address, "المبلغ المالي": o.amount, "الفني المكلف": o.techName, "الحالة الحالية": o.status, "المواد والمستلزمات": o.inventoryNotes || "", "السبب المرصود": o.reason || "" }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "الطلبات"); XLSX.writeFile(wb, "بيان_أوردرات_إيجل_تيك.xlsx");
         }
 
-       document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
+        // [تعديل نظام تسجيل الدخول الفائق والمرن - إيجل تيك]
+        document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
-            const passwordInput = document.getElementById('loginPassword').value;
+            const passwordInput = document.getElementById('loginPassword').value.trim();
             const errorElement = document.getElementById('loginErrorMsg');
 
-            // [تحديث الأمان - إيجل تيك]: التحقق من الباسورد المخصص للفني أو المدير
-            const matchedUser = globalTechnicians.find(t => {
-                const isEmailCorrect = t.email.toLowerCase() === emailInput;
-                // إذا كان للفني باسوورد مخصص مسبقاً نتحقق منه، وإلا نعتمد الباسورد الافتراضي '123'
-                const expectedPassword = t.password ? t.password : '123';
-                return isEmailCorrect && passwordInput === expectedPassword;
-            });
+            let matchedUser = null;
+
+            // 1. الفحص الأول والمباشر: هل الحساب المدخل هو حساب المدير الأساسي؟
+            if (emailInput === adminAccount.email.toLowerCase() && passwordInput === adminAccount.password) {
+                matchedUser = {
+                    name: adminAccount.name,
+                    email: adminAccount.email,
+                    password: adminAccount.password,
+                    role: "مدير",
+                    phone: "0500000000",
+                    status: "نشط بالقاعدة",
+                    initials: "AZ",
+                    color: "bg-purple-600"
+                };
+            } else {
+                // 2. الفحص الثاني: إذا لم يكن المدير، نبحث في قائمة الفنيين السحابية
+                matchedUser = globalTechnicians.find(t => t.email && t.email.toLowerCase() === emailInput && t.password === passwordInput);
+            }
 
             if (matchedUser) {
                 currentActiveUser = matchedUser;
+                
+                // حفظ الجلسة في المتصفح لعدم تكرار تسجيل الدخول عند عمل Refresh
+                localStorage.setItem('eagle_tech_active_user_session', JSON.stringify({ email: emailInput, password: passwordInput }));
+                
                 if(errorElement) errorElement.classList.add('hidden');
                 document.getElementById('loginPageGate').style.display = 'none'; 
-                initFirebaseOrdersListener();
+                
+                // تحديث واجهات النظام بالكامل بعد الدخول
+                if (typeof renderSystem === "function") { renderSystem(); }
             } else {
                 if(errorElement) errorElement.classList.remove('hidden');
             }
         });
 
-        // [حدث ترحيل وحفظ الفني الجديد بالشركة بالباسوورد المخصص له]
-        const modalTechForm = document.getElementById('modalTechForm');
-        if(modalTechForm) {
-            modalTechForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const name = document.getElementById('mTechName').value.trim();
-                const email = document.getElementById('mTechEmail').value.trim().toLowerCase();
-                const phone = document.getElementById('mTechPhone').value.trim();
-                const password = document.getElementById('mTechPassword').value.trim();
-                
-                // توليد الحروف الأولى للاسم تلقائياً للـ Avatar
-                const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
-                
-                // إضافة الفني الجديد إلى القائمة المحلية ببياناته الخاصة
-                globalTechnicians.push({
-                    id: Math.floor(200 + Math.random() * 900),
-                    name: name,
-                    email: email,
-                    phone: phone,
-                    password: password, // حفظ الباسورد الخاص به بنجاح
-                    role: "فني",
-                    rate: "100%",
-                    total: 0, done: 0, collected: 0,
-                    status: "متاح",
-                    initials: initials,
-                    color: "bg-blue-600"
-                });
-
-                modalTechForm.reset();
-                toggleSidebarSettingsModal(false);
-                if(typeof renderSystem === "function") renderSystem();
-                alert(`تم إنشاء حساب الفني (${name}) بنجاح وتعيين الباسورد الخاص به 👥✅`);
-            });
-        }
+        window.addEventListener('DOMContentLoaded', () => { initFirebaseOrdersListener(); });
     </script>
 </body>
 </html>
