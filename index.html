@@ -17,6 +17,35 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex overflow-hidden">
 
+    <div id="loginPageGate" class="fixed inset-0 bg-[#0f172a] z-[100] flex items-center justify-center p-4">
+        <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-8 rounded-2xl shadow-2xl space-y-6 text-center">
+            <div class="space-y-2">
+                <span class="text-4xl">🦅</span>
+                <h2 class="text-white font-black text-xl tracking-wide">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
+                <p class="text-xs text-slate-400 font-bold">يرجى تسجيل الدخول لصلاحيات الأسطول والفنيين</p>
+            </div>
+            
+            <form id="systemLoginForm" class="space-y-4 text-right">
+                <div class="space-y-1">
+                    <label class="text-[11px] font-bold text-slate-400 mr-1">البريد الإلكتروني للعمل:</label>
+                    <input type="email" id="loginEmail" placeholder="name@eagle.com" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500 transition-all" required>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[11px] font-bold text-slate-400 mr-1">كلمة المرور السرية:</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500 transition-all" required>
+                </div>
+                
+                <div id="loginErrorMsg" class="hidden text-[11px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg text-center">
+                    ⚠️ الإيميل أو كلمة المرور غير صحيحة!
+                </div>
+
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-xl shadow-md transition-all">
+                    تسجيل الدخول الآمن ←
+                </button>
+            </form>
+            <p class="text-[9px] text-slate-600 font-bold">نظام تشفير سحابي محمي ماليًا © 2026</p>
+        </div>
+    </div>
     <aside class="w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-screen z-30 border-l border-slate-800">
         <div class="space-y-6">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
@@ -806,6 +835,36 @@
             populateUserSimulatorSelect();
             renderSystem();
             switchTab('dashboard'); 
+        });
+        // =================================================================
+        // [منظومة الأمان]: دالة فحص ومطابقة بيانات تسجيل دخول الفنيين والمدراء
+        // =================================================================
+        document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
+            const passwordInput = document.getElementById('loginPassword').value;
+            const errorElement = document.getElementById('loginErrorMsg');
+
+            // البحث عن الحساب المطابق في النظام
+            const matchedUser = globalTechnicians.find(t => t.email.toLowerCase() === emailInput && passwordInput === '123');
+
+            if (matchedUser) {
+                // تفعيل هوية المستخدم النشط وإخفاء بوابة اللوجن
+                currentActiveUser = matchedUser;
+                errorElement.classList.add('hidden');
+                document.getElementById('loginPageGate').style.display = 'none'; 
+                
+                // ربط القائمة العلوية باسم المستخدم تلقائيًا
+                if(document.getElementById('userSimulator')) {
+                    document.getElementById('userSimulator').value = matchedUser.id;
+                }
+                
+                renderSystem(); // تحديث شاشات الأرقام والبيانات
+                alert(`أهلاً بك مجدداً في Eagle Tech: ${matchedUser.name} (${matchedUser.role})`);
+            } else {
+                // إظهار التنبيه الأحمر في حالة الخطأ
+                errorElement.classList.remove('hidden');
+            }
         });
     </script>
 </body>
