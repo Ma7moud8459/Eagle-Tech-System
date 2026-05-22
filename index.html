@@ -325,20 +325,43 @@
             });
         }
 
+       // [المزامنة المزدوجة المعتمدة - إيجل تيك]: جلب الفنيين والأوردرات معاً من السحاب بشكل لحظي لضمان عدم الاختفاء
         function initFirebaseOrdersListener() {
-            database.ref('orders').on('value', (snapshot) => {
-                globalOrders = [];
-                const data = snapshot.val();
-                if(data) {
-                    Object.keys(data).forEach(key => {
-                        globalOrders.unshift({ firebaseKey: key, ...data[key] });
+            // 1. الاستماع اللحظي للفنيين المسجلين في السيرفر لضمان ثباتهم بعد الـ Refresh
+            database.ref('technicians').on('value', (snapshot) => {
+                // العودة للفنيين الخمسة الأساسيين أولاً لمنع التكرار والتداخل عند كل تحديث
+                globalTechnicians = [
+                    { id: 201, name: "عبدالله الزهراني", email: "abdullah@eagle.com", phone: "8901 567 56 966+", role: "مدير", rate: "96%", total: 0, done: 0, status: "في مهمة", initials: "AA", color: "bg-purple-600", collected: 0 },
+                    { id: 202, name: "سالم البلوي", email: "salem@eagle.com", phone: "7890 456 54 966+", role: "فني", rate: "95%", total: 0, done: 0, status: "غير متاح", initials: "SA", color: "bg-amber-500", collected: 0 },
+                    { id: 203, name: "خالد الرشيد", email: "khaled@eagle.com", phone: "6789 345 50 971+", role: "فني", rate: "93%", total: 0, done: 0, status: "متاح", initials: "KA", color: "bg-emerald-500", collected: 0 },
+                    { id: 204, name: "محمد العبيد", email: "mohamed@eagle.com", phone: "5678 234 55 966+", role: "فني", rate: "94%", total: 0, done: 0, status: "متاح", initials: "MA", color: "bg-pink-500", collected: 0 },
+                    { id: 205, name: "أحمد السيد", email: "ahmed@eagle.com", phone: "4567 123 50 966+", role: "فني", rate: "90%", total: 0, done: 0, status: "في مهمة", initials: "AA", color: "bg-blue-900", collected: 0 }
+                ];
+                
+                const techData = snapshot.val();
+                if(techData) {
+                    Object.keys(techData).forEach(key => {
+                        globalTechnicians.push({ techFirebaseKey: key, ...techData[key] });
                     });
                 }
-                recalculateTechStatsFromOrders();
-                renderSystem();
+                
+                // 2. بعد الاطمئنان على مزامنة الفنيين، نستمع للأوردرات ونربط البيانات مالياً وميدانياً
+                database.ref('orders').off(); // تنظيف المستمع القديم منعاً للتكرار وإجهاد المتصفح
+                database.ref('orders').on('value', (ordersSnapshot) => {
+                    globalOrders = [];
+                    const ordersData = ordersSnapshot.val();
+                    if(ordersData) {
+                        Object.keys(ordersData).forEach(key => {
+                            globalOrders.unshift({ firebaseKey: key, ...ordersData[key] });
+                        });
+                    }
+                    recalculateTechStatsFromOrders();
+                    renderSystem();
+                });
             });
         }
 
+        // دالة إعادة حساب عهد وإحصائيات الفنيين بناءً على تحركات الأوردرات السحابية
         function recalculateTechStatsFromOrders() {
             globalTechnicians.forEach(t => { t.total = 0; t.done = 0; t.collected = 0; });
             globalOrders.forEach(o => {
