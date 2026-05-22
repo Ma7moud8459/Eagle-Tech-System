@@ -37,7 +37,17 @@
 </head>
 <body class="bg-slate-900 min-h-screen flex flex-col overflow-hidden">
 
-    <div class="bg-[#1a1a1a] border-b border-slate-800 h-12 flex items-center justify-center gap-6 z-[200] relative select-none flex-shrink-0">
+    <div id="demoSimulatorBar" class="hidden bg-[#1a1a1a] border-b border-slate-800 h-12 flex items-center justify-center gap-6 z-[200] relative select-none flex-shrink-0">
+        <button onclick="setSimMode('iphone')" id="sim-iphone" class="text-slate-400 hover:text-white transition-all transform hover:scale-110" title="عرض الجوال">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        </button>
+        <button onclick="setSimMode('ipad')" id="sim-ipad" class="text-slate-400 hover:text-white transition-all transform hover:scale-110" title="عرض التابلت">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+        </button>
+        <button onclick="setSimMode('desktop')" id="sim-desktop" class="text-pink-500 hover:text-white transition-all transform hover:scale-110" title="عرض الكمبيوتر">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+        </button>
+    </div>
         <button onclick="setSimMode('iphone')" id="sim-iphone" class="text-slate-400 hover:text-white transition-all transform hover:scale-110" title="عرض الجوال">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
         </button>
@@ -288,7 +298,7 @@
         let lineChartInstance = null;
         let pieChartInstance = null;
 
-        // دالة تحويل وضبط محاكاة ديمو الأجهزة بالأيقونات (توب سينما ستاندرد)
+        // دالة تحويل وضبط محاكاة ديمو الأجهزة وتفعيل التجاوب التلقائي للعامة
         function setSimMode(mode) {
             currentDeviceMode = mode;
             const container = document.getElementById('simulatorContainer');
@@ -304,14 +314,16 @@
                 btn.classList.remove('text-pink-500');
                 btn.classList.add('text-slate-400');
             });
-            document.getElementById(`sim-${mode}`).classList.remove('text-slate-400');
-            document.getElementById(`sim-${mode}`).classList.add('text-pink-500');
+            const activeBtn = document.getElementById(`sim-${mode}`);
+            if(activeBtn) activeBtn.classList.add('text-pink-500');
 
-            // تصفير إطارات الحاضن للمحاكاة
-            if(container) container.className = "bg-slate-50 flex overflow-hidden transition-all duration-300 ";
+            // تصفير إطارات الحاضن للمحاكاة وجعله مرنًا تلقائيًا
+            if(container) container.className = "w-full h-full bg-slate-50 flex flex-col md:flex-row overflow-hidden relative";
 
-            if (mode === 'desktop') {
-                if(container) container.classList.add('w-full', 'h-full', 'flex-row');
+            // فحص حجم الشاشة الفعلي لمعرفة هل المستخدم يفتح من جوال حقيقي أم كمبيوتر
+            const isActualMobile = window.innerWidth < 768;
+
+            if (mode === 'desktop' && !isActualMobile) {
                 if(hamburgerHeader) hamburgerHeader.classList.add('hidden');
                 if(sidebar) sidebar.className = "w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800";
                 if(sidebarClose) sidebarClose.classList.add('hidden');
@@ -320,7 +332,7 @@
                 if(chartsRow) chartsRow.classList.remove('hidden');
             } 
             else if (mode === 'ipad') {
-                if(container) container.classList.add('w-[768px]', 'sim-tablet', 'flex-row');
+                if(container) container.className = "bg-slate-50 flex overflow-hidden transition-all duration-300 w-[768px] sim-tablet flex-row";
                 if(hamburgerHeader) hamburgerHeader.classList.add('hidden');
                 if(sidebar) sidebar.className = "w-64 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800";
                 if(sidebarClose) sidebarClose.classList.add('hidden');
@@ -328,62 +340,27 @@
                 if(mobileCardsContainer) mobileCardsContainer.classList.add('hidden');
                 if(chartsRow) chartsRow.classList.remove('hidden');
             } 
-            else if (mode === 'iphone') {
-                if(container) container.classList.add('w-[393px]', 'sim-phone', 'flex-col');
+            else if (mode === 'iphone' || isActualMobile) {
+                if(mode === 'iphone' && !isActualMobile) {
+                    if(container) container.className = "bg-slate-50 flex overflow-hidden transition-all duration-300 w-[393px] sim-phone flex-col";
+                }
                 if(hamburgerHeader) hamburgerHeader.className = "bg-[#121829] text-white p-4 flex justify-between items-center z-40 border-b border-slate-800 flex-shrink-0 md:hidden";
-                if(sidebar) sidebar.className = "fixed inset-y-0 right-0 transform translate-x-full w-64 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800 z-50";
+                if(sidebar) sidebar.className = "fixed inset-y-0 right-0 transform translate-x-full w-64 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800 z-50 transition-transform duration-300";
                 if(sidebarClose) sidebarClose.classList.remove('hidden');
                 if(desktopTableContainer) desktopTableContainer.classList.add('hidden');
                 if(mobileCardsContainer) mobileCardsContainer.classList.remove('hidden');
-                if(chartsRow) chartsRow.classList.add('hidden'); // إخفاء الرسوم البيانية بالجوال
+                if(chartsRow) chartsRow.classList.add('hidden');
             }
-            renderSystem();
+            if(typeof renderSystem === "function") renderSystem();
         }
 
-        function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebarMenu');
-            if(sidebar) sidebar.classList.toggle('translate-x-full');
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            document.querySelectorAll('nav button').forEach(btn => btn.classList.remove('bg-slate-800', 'text-white'));
-            const activeBtn = document.getElementById(`nav-${tabId}`);
-            if(activeBtn) activeBtn.classList.add('bg-slate-800', 'text-white');
-            
-            if(currentDeviceMode === 'iphone') { toggleMobileMenu(); }
-            if(tabId === 'dashboard') { renderDashboardCharts(); }
-        }
-
-        function toggleOrderModal(open) {
-            const modal = document.getElementById('addOrderModal');
-            if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden');
-        }
-
-        function openNewOrderModal() {
-            updateTechSelectOptions();
-            toggleOrderModal(true);
-        }
-
-        function updateTechSelectOptions() {
-            const select = document.getElementById('moTech'); if(!select) return;
-            select.innerHTML = '';
-            globalTechnicians.forEach(t => { select.innerHTML += `<option value="${t.name}">${t.name}</option>`; });
-        }
-
-        function initFirebaseOrdersListener() {
-            database.ref('orders').on('value', (snapshot) => {
-                globalOrders = [];
-                const data = snapshot.val();
-                if(data) {
-                    Object.keys(data).forEach(key => {
-                        globalOrders.unshift({ firebaseKey: key, ...data[key] });
-                    });
-                }
-                recalculateTechStatsFromOrders();
-                renderSystem();
-            });
+        // [الأمر السري الخاص بك]: اكتب showMyDemo() في الـ Console لإظهار الشريط فورًا
+        function showMyDemo() {
+            const bar = document.getElementById('demoSimulatorBar');
+            if(bar) {
+                bar.classList.remove('hidden');
+                alert("تم تفعيل شريط المحاكاة السري بنجاح يا هندسة 🦅");
+            }
         }
 
         function recalculateTechStatsFromOrders() {
