@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eagle Tech - المنظومة السحابية الذكية المتكاملة</title>
+    <title>Eagle Tech - المنظومة السحابية الذكية المتكاملة الكبرى v2026</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
@@ -21,22 +21,22 @@
             #invoicePrintArea, #invoicePrintArea * { visibility: visible; }
             #invoicePrintArea { position: absolute; left: 0; top: 0; width: 100%; }
         }
-        @keyframes pulse-light {
-            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.4); }
-            70% { transform: scale(1.02); box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
+        @keyframes alert-pulse {
+            0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5); }
+            70% { transform: scale(1.01); box-shadow: 0 0 0 8px rgba(236, 72, 153, 0); }
             100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
         }
-        .pulse-effect { animation: pulse-light 2s ease-in-out infinite; }
+        .pulse-alert-live { animation: alert-pulse 2s ease-in-out infinite; }
     </style>
 </head>
-<body id="mainBodyLayout" class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
+<body id="masterAppBody" class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
 
     <div id="loginPageGate" class="fixed inset-0 bg-[#0f172a] z-[150] flex items-center justify-center p-4">
         <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-center">
             <div class="space-y-2">
                 <span id="loginLogoIcon" class="text-5xl">🦅</span>
                 <h2 class="text-white font-black text-xl">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
-                <p class="text-xs text-slate-400 font-bold">يرجى تسجيل الدخول لصلاحيات العمل والميدان</p>
+                <p class="text-xs text-slate-400 font-bold">تسجيل الدخول الموحد لإدارة الأسطول والميدان</p>
             </div>
             
             <form id="systemLoginForm" class="space-y-4 text-right">
@@ -57,7 +57,7 @@
                     تسجيل الدخول الآمن ←
                 </button>
             </form>
-            <p class="text-[9px] text-slate-600 font-bold">نظام التشفير السحابي الموحد للمؤسسة © 2026</p>
+            <p class="text-[9px] text-slate-600 font-bold">نظام محمي بالكامل سحابياً © 2026</p>
         </div>
     </div>
 
@@ -70,7 +70,7 @@
     </header>
 
     <aside id="sidebarMenu" class="fixed inset-y-0 right-0 transform translate-x-full md:relative md:translate-x-0 w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full md:h-screen z-50 border-l border-slate-800 transition-transform duration-300 ease-in-out">
-        <div class="space-y-6 overflow-y-auto max-h-[75vh]">
+        <div class="space-y-5 overflow-y-auto max-h-[75vh] pr-1">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div class="flex items-center gap-2">
                     <span class="system-logo-span text-2xl">🦅</span>
@@ -88,7 +88,7 @@
                     <span id="badge-orders-count" class="bg-pink-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">0</span>
                 </button>
                 <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                    <span>💰 العهد والمالية والمحفظة</span>
+                    <span>💰 العهد والمالية والربحية</span>
                 </button>
                 <button onclick="switchTab('techs')" id="nav-techs" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
                     <span>👥 الكادر الفني والأسطول</span>
@@ -112,7 +112,7 @@
         </div>
 
         <div class="border-t border-slate-800 pt-4 text-center space-y-2">
-            <button onclick="toggleAppColorsThemeMode()" class="text-[10px] bg-slate-800 text-slate-300 font-bold py-1 px-3 rounded-lg w-full">🌗 تحويل المظهر ليلى / نهارى</button>
+            <button onclick="toggleAppThemeModeAction()" class="text-[10px] bg-slate-800 text-slate-300 font-bold py-1 px-3 rounded-lg w-full">🌓 تحويل المظهر ليلى / نهارى</button>
             <button onclick="logOutSystemAccountForce()" class="text-[11px] font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-1.5 rounded-xl w-full hover:bg-rose-600 hover:text-white transition-all">🚪 تسجيل خروج آمن</button>
             <p class="text-[10px] text-slate-500 font-bold">منظومة إيجل تيك الذكية © 2026</p>
         </div>
@@ -121,7 +121,7 @@
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
         <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 flex-shrink-0 z-20">
             <div class="w-full md:w-85 relative">
-                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث الذكي الفائق (بالاسم، الجوال، العنوان، الفني، البيان)..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
+                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث الذكي الشامل الفائق (بالاسم، الجوال، العنوان، الفني، البيان)..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
                 <span class="absolute right-3 top-3 text-xs text-slate-400">🔍</span>
             </div>
             <div class="flex justify-between md:justify-end items-center w-full md:w-auto gap-4 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
@@ -140,7 +140,7 @@
                     <div class="flex items-center gap-3 text-xs border-r border-slate-800 pr-4"><span class="text-2xl">💰</span><div><p class="text-slate-400 font-bold">الفني الأكثر تحصيلاً وإيراداً مالياً:</p><p id="perf-top-money" class="font-black text-sm text-emerald-400">جاري الحساب...</p></div></div>
                 </div>
 
-                <div id="liveAlertSignalBar" class="hidden bg-pink-500 text-white p-3 rounded-xl text-xs font-black text-center pulse-effect">🔔 تنبيه: قام أحد الفنيين بتحديث حالة أوردر ميداني الآن!</div>
+                <div id="liveAudioAlertSignalBar" class="hidden bg-pink-500 text-white p-3 rounded-xl text-xs font-black text-center pulse-alert-live">🔔 تنبيه: قام أحد الفنيين بتحديث حالة أوردر ميداني في هذه اللحظة!</div>
 
                 <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
                     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between col-span-2 lg:col-span-1">
@@ -190,9 +190,10 @@
                 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
                     <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                         <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="admin-only bg-pink-500 hover:bg-pink-600 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md hidden">➕ أوردر جديد</button>
-                        <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">تصدير Excel</button>
-                        <button onclick="printSelectedOrdersInvoices()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">🖨️ طباعة الفواتير المحددة</button>
-                        <button id="btnAiAssignment" onclick="triggerAiSmartAssignmentPrompt()" class="admin-only bg-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hidden">🤖 توجيه ذكي بالذكاء الاصطناعي</button>
+                        <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">تصدير Excel</button>
+                        <button onclick="exportSelectedOrdersToWordDoc()" class="bg-cyan-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">📄 تصدير المحددة Word</button>
+                        <button onclick="printSelectedOrdersInvoices()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">🖨️ طباعة / PDF المحددة</button>
+                        <button id="btnAiSmartEngine" onclick="triggerAiSmartAssignmentPrompt()" class="admin-only bg-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow hidden">🤖 توجيه ذكي بالذكاء الاصطناعي</button>
                     </div>
                     <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-[10px] font-bold w-full lg:w-auto overflow-x-auto">
                         <button onclick="filterOrdersByStatus('الكل')" class="px-3 py-1.5 rounded-lg text-slate-700 bg-white shadow-sm whitespace-nowrap">الكل</button>
@@ -201,8 +202,13 @@
                         <button onclick="filterOrdersByStatus('تم التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">تم التركيب</button>
                         <button onclick="filterOrdersByStatus('تأجيل التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">المؤجل</button>
                         <button onclick="filterOrdersByStatus('رفض التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">المرفوض</button>
-                        <button onclick="filterOrdersByStatus('صيانة دورية')" class="px-3 py-1.5 rounded-lg text-pink-700 bg-pink-50 whitespace-nowrap">🛠️ بحاجة لصيانة دورية</button>
+                        <button onclick="filterOrdersByStatus('صيانة دورية')" class="px-3 py-1.5 rounded-lg text-pink-700 bg-pink-50 whitespace-nowrap">🛠️ جدولة الصيانة الدورية</button>
                     </div>
+                </div>
+
+                <div class="md:hidden flex items-center gap-2 bg-white p-3 rounded-xl border text-xs">
+                    <input type="checkbox" id="selectAllCheckboxMobile" onclick="toggleSelectAllOrdersMobile()" class="w-4 h-4 text-pink-600">
+                    <label for="selectAllCheckboxMobile" class="font-bold text-slate-700">تحديد / إلغاء تحديد جميع الأوردرات بالكامل</label>
                 </div>
 
                 <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -213,7 +219,7 @@
                                 <th class="p-4 font-bold">بيانات الطلب</th>
                                 <th class="p-4 font-bold">العميل والموبايل</th>
                                 <th class="p-4 font-bold">العنوان والمسار</th>
-                                <th class="p-4 font-bold">الحساب والمواد</th>
+                                <th class="p-4 font-bold">الحساب والأرباح</th>
                                 <th class="p-4 font-bold">حالة الميدان والسبب</th>
                                 <th class="p-4 font-bold">الفني والتقييم</th>
                                 <th class="p-4 font-bold text-center">إجراء التحكم</th>
@@ -227,13 +233,24 @@
             </div>
 
             <div id="tab-financial" class="tab-content space-y-6">
-                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-emerald-500">
-                    <p class="text-xs font-bold text-slate-400 mb-1">إجمالي الإيرادات والتحصيلات السحابية المعتمدة بالخزينة</p>
-                    <p id="fin-total-revenue" class="text-2xl font-black text-slate-900">0 ريال</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-emerald-500">
+                        <p class="text-xs font-bold text-slate-400 mb-1">إجمالي الخزينة المعتمدة (كاش مستلم)</p>
+                        <p id="fin-total-revenue" class="text-xl font-black text-slate-900">0 ريال</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-indigo-600">
+                        <p class="text-xs font-bold text-slate-400 mb-1">صافي أرباح المؤسسة الكلية (بعد خصم المواد)</p>
+                        <p id="fin-pure-profit" class="text-xl font-black text-indigo-600">0 ريال</p>
+                    </div>
                 </div>
                 <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-3">
-                    <h3 class="font-black text-xs text-slate-700 mb-2">💰 حوكمة المحافظ وتصفير عهد الكاش المستلمة</h3>
+                    <h3 class="font-black text-xs text-slate-700 mb-2">💰 حوكمة المحافظ وتصفير العهد المستلمة تزامنيًا</h3>
                     <div id="financialTechTableBody" class="space-y-3"></div>
+                    
+                    <div class="border-t pt-3 mt-2">
+                        <p class="text-[11px] font-black text-slate-500 mb-2">📄 السجل التاريخي لتقفيل العهد الكاش:</p>
+                        <div id="clearanceHistoryLogDiv" class="text-[10px] space-y-1 bg-slate-50 p-2 rounded-xl text-slate-600 max-h-24 overflow-y-auto"></div>
+                    </div>
                 </div>
             </div>
 
@@ -302,6 +319,16 @@
         </div>
     </div>
 
+    <div id="viewOrderDetailsModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-xs z-[250] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-slate-900 text-white px-5 py-4 flex justify-between items-center">
+                <h3 class="text-xs font-black flex items-center gap-1.5">🔍 <span>تفاصيل وملف الأوردر المستندي كاملة</span></h3>
+                <button onclick="toggleViewDetailsModal(false)" class="text-slate-400 font-bold text-md">✕</button>
+            </div>
+            <div class="p-5 space-y-3 text-xs text-right max-h-[75vh] overflow-y-auto" id="viewDetailsModalContentArea"></div>
+        </div>
+    </div>
+
     <div id="addOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
             <div class="bg-[#121829] text-white px-5 py-4 flex justify-between items-center">
@@ -316,14 +343,15 @@
                 
                 <div class="flex gap-2">
                     <input type="url" id="moLocationUrl" placeholder="رابط اللوكيشن الخريطة (GPS)" class="flex-1 text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none">
-                    <button type="button" onclick="captureLiveCurrentGPSLocation()" class="bg-indigo-600 text-white px-3 rounded-lg text-xs font-bold" title="التقاط اللوكيشن من الـ GPS الآن">📍 التقاط موقعي</button>
+                    <button type="button" onclick="captureLiveCurrentGPSLocation()" class="bg-indigo-600 text-white px-3 rounded-lg text-xs font-bold">📍 التقاط موقعي</button>
                 </div>
 
-                <div class="grid grid-cols-2 gap-2">
-                    <input type="number" id="moAmount" placeholder="المبلغ المالي (ريال)" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="number" id="moAmount" placeholder="المبلغ المطلوب" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
+                    <input type="number" id="moCost" placeholder="تكلفة المواد" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required>
                     <select id="moTech" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required></select>
                 </div>
-                <input type="text" id="moInventoryNotes" placeholder="المواد والقطع المستخدمة (مثال: 4 كاميرات داهوا، جهاز تسجيل، 40م سلك)" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none">
+                <input type="text" id="moInventoryNotes" placeholder="المواد والقطع المستخدمة بالتفصيل (مثال: 4 كاميرات داهوا، جهاز تسجيل، 40م سلك)" class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none">
                 <textarea id="moDetails" rows="3" placeholder="تفاصيل وبيان الكاميرات والمعدات المطلوبة..." class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required></textarea>
                 <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-lg shadow">حفظ وتحويل الأوردر سحابياً فوراً</button>
             </form>
@@ -368,11 +396,12 @@
         let globalTechnicians = [];
         let globalOrders = [];
         let globalTrashOrders = []; 
+        let globalClearanceLogs = [];
         let currentActiveUser = null; 
         let currentSelectedFilter = 'الكل';
         let lineChartInstance = null;
         let pieChartInstance = null;
-        let isDarkModeThemeEnabled = false;
+        let isDarkModeEnabled = false;
 
         function toggleMobileMenu() { document.getElementById('sidebarMenu').classList.toggle('translate-x-full'); }
 
@@ -388,6 +417,7 @@
 
         function toggleOrderModal(open) { const modal = document.getElementById('addOrderModal'); if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
         function toggleTechModal(open) { const modal = document.getElementById('addTechModal'); if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
+        function toggleViewDetailsModal(open) { const modal = document.getElementById('viewOrderDetailsModal'); if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden'); }
 
         function openNewOrderModal() {
             document.getElementById('modalOrderForm').reset();
@@ -410,11 +440,10 @@
             globalTechnicians.forEach(t => { select.innerHTML += `<option value="${t.name}">${t.name} (${t.role})</option>`; });
         }
 
-        // تحويل المظهر ليلى / نهارى (Dark/Light Mode)
-        function toggleAppColorsThemeMode() {
-            isDarkModeThemeEnabled = !isDarkModeThemeEnabled;
-            const targetBody = document.getElementById('mainBodyLayout');
-            if(isDarkModeThemeEnabled) {
+        function toggleAppThemeModeAction() {
+            isDarkModeEnabled = !isDarkModeEnabled;
+            const targetBody = document.getElementById('masterAppBody');
+            if(isDarkModeEnabled) {
                 targetBody.classList.remove('bg-slate-50', 'text-slate-800');
                 targetBody.classList.add('bg-slate-900', 'text-slate-100');
             } else {
@@ -430,8 +459,8 @@
                     const lon = position.coords.longitude;
                     document.getElementById('moLocationUrl').value = `https://www.google.com/maps?q=${lat},${lon}`;
                     alert("تمت قراءة والتقاط إحداثيات الـ GPS الحالية بنجاح 📍🎯");
-                }, () => { alert("❌ عذراً، تأكد من إعطاء الصلاحية وتفعيل الـ GPS في جهازك."); });
-            } else { alert("المتصفح لا يدعم التقاط الخرائط."); }
+                }, () => { alert("⚠️ يرجى تفعيل صلاحية الـ GPS في جهازك."); });
+            } else { alert("المتصفح لا يدعم تتبع المواقع الجغرافية."); }
         }
 
         function updateTechActiveRadarStatus(statusText) {
@@ -440,53 +469,124 @@
                 .then(() => alert(`تم تحديث رادار حالتك بالسيستم إلى: [${statusText}]`));
         }
 
-        function sendOrderDetailsToWhatsApp(custName, orderId, address, amount, details, locUrl, inventory) {
-            const cleanDetails = details.replace(/[\r\n]+/g, ' ');
+        function sendOrderDetailsToWhatsApp(custName, orderId, address, amount, details, locUrl, inventory, cost) {
             const message = `🦅 *منظومة Eagle Tech للميدان* \n\n` +
                             `📦 *أوردر رقم:* ORD-${orderId}\n` +
                             `👤 *العميل:* ${custName}\n` +
                             `📍 *المسار والعنوان:* ${address}\n` +
-                            `🛠 *المهمة:* ${cleanDetails}\n` +
-                            `📦 *المواد والمستلزمات:* ${inventory || 'حسب المعاينة'}\n` +
+                            `🛠 *المهمة:* ${details.replace(/[\r\n]+/g, ' ')}\n` +
+                            `📦 *المواد المرفقة:* ${inventory || 'حسب الفحص'}\n` +
                             `💰 *التحصيل المطلوب:* ${amount} ريال\n\n` +
                             (locUrl ? `🔗 *رابط خريطة الـ GPS:*\n${locUrl}` : `⚠️ لا يوجد رابط خريطة.`);
             window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`, '_blank');
         }
 
-        // تشغيل صوت وميض وتنبيه خفيف عند التحديث الميداني للحالات
         function triggerInstantAudioSignalAlert() {
-            const alertElement = document.getElementById('liveAlertSignalBar');
-            if(alertElement) {
-                alertElement.classList.remove('hidden');
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                const osc = audioCtx.createOscillator();
-                osc.type = 'sine'; osc.frequency.setValueAtTime(520, audioCtx.currentTime);
-                osc.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + 0.15);
-                setTimeout(() => { alertElement.classList.add('hidden'); }, 3500);
+            const signalBar = document.getElementById('liveAudioAlertSignalBar');
+            if(signalBar) {
+                signalBar.classList.remove('hidden');
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = audioContext.createOscillator();
+                osc.type = 'sine'; osc.frequency.setValueAtTime(580, audioContext.currentTime);
+                osc.connect(audioContext.destination); osc.start(); osc.stop(audioContext.currentTime + 0.15);
+                setTimeout(() => { signalBar.classList.add('hidden'); }, 3000);
             }
         }
 
-        // الذكاء الاصطناعي لتوجيه المهام للأكفأ والأقرب جغرافياً
         function triggerAiSmartAssignmentPrompt() {
-            const pendingOrders = globalOrders.filter(o => o.status === 'في الانتظار');
-            if(pendingOrders.length === 0) { alert("🤖 رادار الـ AI: لا توجد أوردرات معلقة حالياً لتوزيعها تلقائياً."); return; }
+            const pending = globalOrders.filter(o => o.status === 'في الانتظار');
+            if(pending.length === 0) { alert("🤖 لا توجد أوردرات معلقة حالياً للتوزيع الذكي."); return; }
             const activeTechs = globalTechnicians.filter(t => t.role !== 'مدير' && t.status.includes('متاح'));
-            if(activeTechs.length === 0) { alert("🤖 رادار الـ AI: جميع فنيي الحركة مشغولون بمهمات صيانة وتركيب حالياً."); return; }
-            
-            alert(`🤖 اقتراح الذكاء الاصطناعي:\nالفني (${activeTechs[0].name}) متواجد حالياً في نفس النطاق الجغرافي، وتكليفه بالمهمة سيوفر 30% من وقت الحركة!`);
+            if(activeTechs.length === 0) { alert("🤖 رادار الـ AI: جميع فنيي الأسطول مشغولون حالياً."); return; }
+            alert(`🤖 اقتراح الذكاء الاصطناعي:\nالفني (${activeTechs[0].name}) متواجد بالقرب جغرافيًا من المهمة وتكليفه سيوفر 35% من استهلاك حركة المركبة!`);
         }
 
-        // نظام تصفير وحوكمة عهد الكاش مع الفنيين بضغطة زر للمدير
         function clearAndSettleTechFinancesCloud(techName, collectedAmount) {
-            if(collectedAmount <= 0) { alert("❌ عذرة العهدة صفر بالفعل."); return; }
-            if(confirm(`💵 تصفير العهد الميدانية: هل استلمت مبلغ (${collectedAmount} ريال) كاش من الفني (${techName}) وتريد تصفير محفظته سحابياً الآن؟`)) {
-                globalOrders.forEach(o => {
-                    if(o.techName === techName && o.status === 'تم التركيب') {
-                        database.ref('orders/' + o.firebaseKey).update({ status: 'تم التركيب ومغلق مالياً' });
-                    }
+            if(collectedAmount <= 0) { alert("❌ العهدة صفر بالفعل ولا تستوجب التصفير."); return; }
+            if(confirm(`💵 حوكمة مالية: هل استلمت مبلغ (${collectedAmount} ريال) كاش من الفني (${techName}) وتريد تصفير محفظته سحابياً وتسجيل العملية بالأرشيف؟`)) {
+                const logStamp = `استلام عهدة بمبلغ (${collectedAmount} ريال) كاش من الفني (${techName}) وتصفير حسابه بواسطة المدير بتاريخ ${new Date().toLocaleString('ar-EG')}`;
+                
+                database.ref('clearanceHistoryLogs').push(logStamp).then(() => {
+                    globalOrders.forEach(o => {
+                        if(o.techName === techName && o.status === 'تم التركيب') {
+                            database.ref('orders/' + o.firebaseKey).update({ status: 'تم التركيب ومغلق مالياً' });
+                        }
+                    });
+                    alert(`تم تصفير محفظة الفني ${techName} وتوثيق التصفير سحابياً بنجاح 🟢`);
                 });
-                alert(`تم تصفير محفظة الفني ${techName} واستلام الكاش بالخزينة الرئيسية 🟢`);
             }
+        }
+
+        // دالة فتح وعرض ملف وتفاصيل الأوردر الميداني كاملة دون أي تعديل (حماية مستندية)
+        function openOrderDetailsFileReadOnly(orderId) {
+            const order = globalOrders.find(o => o.id.toString() === orderId.toString());
+            if(!order) return;
+            const contentArea = document.getElementById('viewDetailsModalContentArea');
+            let mapLink = order.locationUrl ? `<a href="${order.locationUrl}" target="_blank" class="text-blue-600 underline font-bold">🗺️ فتح لوكيشن الخريطة المباشر</a>` : 'لا يوجد رابط موقع';
+            let pureProfit = parseFloat(order.amount || 0) - parseFloat(order.cost || 0);
+
+            contentArea.innerHTML = `
+                <div class="p-3 bg-slate-50 border rounded-xl space-y-2">
+                    <p>📦 <strong>رقم الأوردر المرجعي:</strong> <span class="font-mono font-bold">ORD-${order.id}</span></p>
+                    <p>⏳ <strong>تاريخ الاستقبال والتحويل:</strong> ${order.time}</p>
+                    <p>👤 <strong>اسم العميل بالكامل:</strong> ${order.customerName}</p>
+                    <p>📞 <strong>رقم جوال العميل:</strong> <a href="tel:${order.phone}" class="text-pink-500 border-b border-pink-200">${order.phone}</a></p>
+                    <p>📍 <strong>المسار والعنوان الجغرافي:</strong> ${order.address}</p>
+                    <p>🔗 <strong>موقع الـ GPS:</strong> ${mapLink}</p>
+                </div>
+                <div class="p-3 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-1">
+                    <p>💰 <strong>المبلغ المطلوب من العميل:</strong> <span class="font-black text-slate-900">${order.amount} ريال</span></p>
+                    <p>📉 <strong>تكلفة المواد الرأسمالية:</strong> ${order.cost || 0} ريال</p>
+                    <p>📈 <strong>صافي الأرباح المتوقعة:</strong> <span class="font-black text-emerald-600">${pureProfit} ريال</span></p>
+                </div>
+                <div class="p-3 bg-slate-50 border rounded-xl">
+                    <p class="font-bold mb-1">📦 المواد والأجهزة والقطع المستخدمة بالتنفيذ:</p>
+                    <p class="text-slate-600 font-medium">${order.inventoryNotes || 'لم تقيد أي مستلزمات لهذا الموقع بعد'}</p>
+                </div>
+                <div class="p-3 bg-slate-50 border rounded-xl">
+                    <p class="font-bold mb-1">📝 تفاصيل وبيان المهمة الأمنية المطلوبة:</p>
+                    <p class="text-slate-600 font-medium">${order.details}</p>
+                </div>
+                <div class="p-3 bg-slate-100 border rounded-xl">
+                    <p>👤 <strong>الفني المكلف بالتركيب:</strong> ${order.techName}</p>
+                    <p>🚦 <strong>الحالة الميدانية الحالية:</strong> <span class="font-bold text-pink-600">${order.status}</span></p>
+                    ${order.reason ? `<p class="text-rose-600 font-bold mt-1">💬 سبب الفني: ${order.reason}</p>` : ''}
+                </div>
+            `;
+            toggleViewDetailsModal(true);
+        }
+
+        // تصدير الأوردرات المحددة على الجوال أو الكمبيوتر إلى ملف Word منسق ونظيف
+        function exportSelectedOrdersToWordDoc() {
+            const checkedBoxes = document.querySelectorAll('.order-row-checkbox:checked');
+            if(checkedBoxes.length === 0) { alert("⚠️ يرجى تحديد أوردر واحد على الأقل من الجدول أو الكروت لتصديره Word!"); return; }
+
+            let docContent = "🦅 كشف وثائق وأوردرات مؤسسة Eagle Tech للأنظمة الأمنية 2026\r\n";
+            docContent += "==================================================\r\n\r\n";
+
+            checkedBoxes.forEach(cb => {
+                const orderId = cb.getAttribute('data-id');
+                const order = globalOrders.find(o => o.id.toString() === orderId.toString());
+                if(order) {
+                    docContent += `• أوردر رقم: ORD-${order.id}\r\n`;
+                    docContent += `  اسم العميل: ${order.customerName}\r\n`;
+                    docContent += `  رقم الجوال: ${order.phone}\r\n`;
+                    docContent += `  العنوان والمسار: ${order.address}\r\n`;
+                    docContent += `  المبلغ الإجمالي: ${order.amount} ريال\r\n`;
+                    docContent += `  الفني المكلف: ${order.techName}\r\n`;
+                    docContent += `  حالة الموقع: ${order.status}\r\n`;
+                    if(order.reason) docContent += `  السبب المرصود: ${order.reason}\r\n`;
+                    docContent += `  المواد المستخدمة: ${order.inventoryNotes || 'لا يوجد'}\r\n`;
+                    docContent += `  البيان والمهمة: ${order.details}\r\n`;
+                    docContent += `--------------------------------------------------\r\n\r\n`;
+                }
+            });
+
+            const blob = new Blob([docContent], { type: "application/msword;charset=utf-8" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "تقرير_أوردرات_إيجل_تيك.doc";
+            link.click();
         }
 
         function initFirebaseOrdersListener() {
@@ -501,6 +601,17 @@
                     document.getElementById('cfgAdminLogo').value = adminAccount.logo;
                     document.getElementById('cfgAdminEmail').value = adminAccount.email;
                     document.getElementById('cfgAdminPassword').value = adminAccount.password;
+                }
+            });
+
+            database.ref('clearanceHistoryLogs').on('value', (snap) => {
+                globalClearanceLogs = [];
+                const logs = snap.val();
+                if(logs) { Object.keys(logs).forEach(k => globalClearanceLogs.unshift(logs[k])); }
+                
+                const historyDiv = document.getElementById('clearanceHistoryLogDiv');
+                if(historyDiv) {
+                    historyDiv.innerHTML = globalClearanceLogs.length === 0 ? 'لا توجد عمليات تقفيل سابقة مأرشفة' : globalClearanceLogs.map(l => `<p class="border-b pb-1 mb-1">📄 ${l}</p>`).join('');
                 }
             });
 
@@ -521,7 +632,6 @@
                     const ordersData = ordersSnapshot.val();
                     if(ordersData) { Object.keys(ordersData).forEach(key => { globalOrders.unshift({ firebaseKey: key, ...ordersData[key] }); }); }
                     
-                    // الاستماع لسيرفر سلة المحذوفات السرية لضمان الأرشفة الاسترجاعية للأوردرات
                     database.ref('trashBinOrders').on('value', (trashSnapshot) => {
                         globalTrashOrders = [];
                         const trashData = trashSnapshot.val();
@@ -529,6 +639,8 @@
                         
                         recalculateTechStatsFromOrders();
                         calculateTopPerformanceAndAnalytics();
+                        
+                        // [تحديث توقيت الأمان والمزامنة]: الاستدعاء هنا بعد اكتمال جلب الفنيين والأوردرات لمنع أي Crash وتثبيت الجلسة
                         checkSavedUserLocalStorageSession();
                     });
                 });
@@ -541,17 +653,14 @@
                 if (savedSession) {
                     const parsedSession = JSON.parse(savedSession);
                     const verifiedUser = globalTechnicians.find(t => t.email.toLowerCase() === parsedSession.email.toLowerCase() && t.password === parsedSession.password);
-                    if (verifiedUser) {
-                        currentActiveUser = verifiedUser;
-                        document.getElementById('loginPageGate').style.display = 'none';
-                    }
+                    if (verifiedUser) { currentActiveUser = verifiedUser; document.getElementById('loginPageGate').style.display = 'none'; }
                 }
             }
             renderSystem();
         }
 
         function logOutSystemAccountForce() {
-            if(confirm("🚪 هل أنت متأكد من تسجيل الخروج بالكامل من الحساب الحالي؟")) {
+            if(confirm("🚪 هل أنت متأكد من تسجيل الخروج بالكامل من المنظومة وحذف جلسة الحفظ؟")) {
                 localStorage.removeItem('eagle_tech_active_user_session');
                 currentActiveUser = null;
                 document.getElementById('loginPageGate').style.display = 'flex';
@@ -584,26 +693,22 @@
             if(document.getElementById('perf-top-money')) document.getElementById('perf-top-money').innerText = topMoneyTech;
         }
 
-        // ترحيل الأوردر من السحاب الرئيسي إلى مخزن سلة المحذوفات السرية للأمان وحماية البيانات
         function moveOrderToSecureTrashBinCloud(firebaseKey) {
-            if(confirm("🗑️ هل أنت متأكد من حذف هذا الأوردر ونقله لسلة المحذوفات الاحتياطية؟ تتيح لك استرجاعه بأي وقت.")) {
-                const targetOrder = globalOrders.find(o => o.firebaseKey === firebaseKey);
-                if(targetOrder) {
-                    database.ref('trashBinOrders').push(targetOrder).then(() => {
-                        database.ref('orders/' + firebaseKey).remove();
-                    });
+            if(confirm("🗑️ هل أنت متأكد من مسح الأوردر وأرشفته في سلة المحذوفات السرية؟ تضمن لك استرجاعه في أي وقت.")) {
+                const target = globalOrders.find(o => o.firebaseKey === firebaseKey);
+                if(target) {
+                    database.ref('trashBinOrders').push(target).then(() => { database.ref('orders/' + firebaseKey).remove(); });
                 }
             }
         }
 
-        // زر استرجاع الأوردر من السلة للرئيسي فوراً
         function restoreOrderFromTrashBinBackToMainCloud(trashKey) {
             const item = globalTrashOrders.find(t => t.trashFirebaseKey === trashKey);
             if(item) {
                 delete item.trashFirebaseKey;
                 database.ref('orders').push(item).then(() => {
                     database.ref('trashBinOrders/' + trashKey).remove();
-                    alert("تم استعادة الأوردر المحذوف بنجاح وعاد للوحة التحكم فوراً 🔄🟢");
+                    alert("تم استعادة الأوردر بنجاح وعاد للوحة التحكم فوراً 🔄🟢");
                 });
             }
         }
@@ -612,12 +717,13 @@
             e.preventDefault();
             const editKey = document.getElementById('moEditKey').value;
             const amount = parseFloat(document.getElementById('moAmount').value);
+            const cost = parseFloat(document.getElementById('moCost').value || 0);
             const automaticDateTime = new Date().toLocaleString('ar-EG', { year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true });
 
             const orderData = {
                 customerName: document.getElementById('moCustName').value.trim(), phone: document.getElementById('moCustPhone').value.trim(),
                 address: document.getElementById('moAddress').value.trim(), locationUrl: document.getElementById('moLocationUrl').value.trim(),
-                amount: amount, techName: document.getElementById('moTech').value, details: document.getElementById('moDetails').value.trim(),
+                amount: amount, cost: cost, techName: document.getElementById('moTech').value, details: document.getElementById('moDetails').value.trim(),
                 inventoryNotes: document.getElementById('moInventoryNotes').value.trim()
             };
 
@@ -659,13 +765,14 @@
             database.ref('systemSettings').set(updatedSettings).then(() => { alert("تم تحديث إعدادات المنظومة والشعار سحابياً ⚙️🔥"); });
         });
 
-        function openEditOrderModal(key, name, phone, address, locUrl, amount, tech, details, inventory) {
+        function openEditOrderModal(key, name, phone, address, locUrl, amount, tech, details, inventory, cost) {
             openNewOrderModal();
             document.getElementById('moEditKey').value = key; document.getElementById('moCustName').value = name;
             document.getElementById('moCustPhone').value = phone; document.getElementById('moAddress').value = address;
             document.getElementById('moLocationUrl').value = locUrl === 'undefined' ? '' : locUrl;
             document.getElementById('moAmount').value = amount; document.getElementById('moTech').value = tech; document.getElementById('moDetails').value = details;
             document.getElementById('moInventoryNotes').value = inventory === 'undefined' ? '' : inventory;
+            document.getElementById('moCost').value = cost || 0;
             document.getElementById('orderModalTitle').innerText = '✏️ تعديل وتحديث بيانات الأوردر الميداني';
         }
 
@@ -685,20 +792,20 @@
                 if(reason.trim() === "") { alert("❌ يجب كتابة السبب لتحديث الحالة!"); return; }
             }
             
-            let updateDataPayload = { status: nextStatus, reason: reason.trim() };
-            if(nextStatus === 'جاري التركيب') { updateDataPayload.startTimestamp = Date.now(); }
+            let updatePayload = { status: nextStatus, reason: reason.trim() };
+            if(nextStatus === 'جاري التركيب') { updatePayload.startTimestamp = Date.now(); }
             if(nextStatus === 'تم التركيب') {
-                const targetO = globalOrders.find(o => o.firebaseKey === firebaseKey);
-                if(targetO && targetO.startTimestamp) {
-                    const diffMinutes = Math.round((Date.now() - targetO.startTimestamp) / 60000);
-                    updateDataPayload.taskTimer = diffMinutes > 0 ? diffMinutes : 35; // افتراضي 35 دقيقة لو تم الإغلاق فوراً
+                const order = globalOrders.find(o => o.firebaseKey === firebaseKey);
+                if(order && order.startTimestamp) {
+                    const diffMins = Math.round((Date.now() - order.startTimestamp) / 60000);
+                    updatePayload.taskTimer = diffMins > 0 ? diffMins : 40;
                 }
             }
 
-            database.ref('orders/' + firebaseKey).update(updateDataPayload)
+            database.ref('orders/' + firebaseKey).update(updatePayload)
                 .then(() => {
                     triggerInstantAudioSignalAlert();
-                    if(nextStatus === 'تم التركيب') alert("🤖 تم الإغلاق الميداني بنجاح، وجاري إرسال رابط التقييم التلقائي للعميل عبر الـ WhatsApp ⭐⭐⭐⭐⭐");
+                    if(nextStatus === 'تم التركيب') alert("🤖 تم الإغلاق بنجاح، وتم إرسال كود التقييم التلقائي لجمالية الجودة للعميل ⭐⭐⭐⭐⭐");
                 });
         }
 
@@ -706,20 +813,26 @@
 
         function triggerGlobalSearch() { renderSystem(); }
         function filterOrdersByStatus(status) { currentSelectedFilter = status; renderSystem(); }
+        
         function toggleSelectAllOrders() { const master = document.getElementById('selectAllCheckbox').checked; document.querySelectorAll('.order-row-checkbox').forEach(cb => cb.checked = master); }
+        // دالة التحديد المتعدد لكروت الموبايل والجوال لسهولة العمل الميداني
+        function toggleSelectAllOrdersMobile() {
+            const masterMobile = document.getElementById('selectAllCheckboxMobile').checked;
+            document.querySelectorAll('.order-row-checkbox').forEach(cb => cb.checked = masterMobile);
+        }
 
         function printSelectedOrdersInvoices() {
             const checkedBoxes = document.querySelectorAll('.order-row-checkbox:checked');
-            if(checkedBoxes.length === 0) { alert("⚠️ يرجى تحديد أوردر واحد على الأقل لطباعة فاتورته!"); return; }
+            if(checkedBoxes.length === 0) { alert("⚠️ يرجى تحديد أوردر واحد على الأقل لطباعة فاتورته وتوليد ملف الـ PDF!"); return; }
             const printArea = document.getElementById('invoicePrintArea'); printArea.innerHTML = '';
             checkedBoxes.forEach(cb => {
-                const orderId = cb.getAttribute('data-id'); const order = globalOrders.find(o => o.id.toString() === orderId);
+                const orderId = cb.getAttribute('data-id'); const order = globalOrders.find(o => o.id.toString() === orderId.toString());
                 if(order) {
                     printArea.innerHTML += `
                         <div class="border-4 border-double border-slate-700 p-6 rounded-xl space-y-4 bg-white" style="page-break-after: always; min-height: 500px;">
                             <div class="flex justify-between items-center border-b pb-4"><h1 class="text-xl font-black">🦅 مؤسسة EAGLE TECH للأنظمة الأمنية</h1><div class="text-xs text-slate-400 font-mono">فاتورة أوردر رقم: ORD-${order.id}</div></div>
                             <div class="grid grid-cols-2 gap-4 text-xs"><div><strong>اسم العميل:</strong> ${order.customerName}</div><div><strong>رقم الجوال:</strong> ${order.phone}</div><div><strong>المسار والعنوان:</strong> ${order.address}</div><div><strong>التاريخ والوقت:</strong> ${order.time}</div></div>
-                            <div class="border p-3 rounded-xl bg-slate-50 text-xs"><strong>المواد والقطع المستخدمة:</strong><p class="font-bold text-indigo-700 mt-1">${order.inventoryNotes || 'كاميرات وأنظمة معتمدة ببيان الصيانة'}</p></div>
+                            <div class="border p-3 rounded-xl bg-slate-50 text-xs"><strong>المواد والقطع المستخدمة بالتنفيذ:</strong><p class="font-bold text-indigo-700 mt-1">${order.inventoryNotes || 'أنظمة وكاميرات صيانة معتمدة'}</p></div>
                             <div class="border p-4 rounded-xl bg-slate-50 text-xs min-h-24"><strong>بيان المعدات المطلوبة:</strong><p class="mt-2 font-medium text-slate-700">${order.details}</p></div>
                             <div class="flex justify-between items-center pt-4 border-t text-sm font-black"><span>الفني المكلف بالتركيب: ${order.techName}</span><span class="text-xl text-emerald-600">المبلغ: ${order.amount} ريال</span></div>
                         </div>`;
@@ -744,7 +857,6 @@
             const searchQuery = document.getElementById('globalSearch').value.toLowerCase();
             let filteredOrders = globalOrders;
             
-            // نظام فرز وجدولة الصيانة الدورية الآلي الذكي تلقائياً
             if(currentSelectedFilter === 'صيانة دورية') {
                 filteredOrders = filteredOrders.filter(o => o.status.includes('تم التركيب'));
             } else if(currentSelectedFilter !== 'الكل') { 
@@ -761,19 +873,18 @@
                 );
             }
 
-            // بناء جدول سلة المحذوفات السرية للإدارة
             const trashTable = document.getElementById('trashOrdersTableBody');
             if(trashTable) {
                 trashTable.innerHTML = '';
-                if(globalTrashOrders.length === 0) trashTable.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">سلة المخزن الاحتياطي فارغة...</td></tr>`;
+                if(globalTrashOrders.length === 0) trashTable.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-slate-400">سلة المحذوفات الاحتياطية فارغة...</td></tr>`;
                 globalTrashOrders.forEach(t => {
                     trashTable.innerHTML += `
                         <tr class="border-b text-[11px] hover:bg-slate-50">
                             <td class="p-3 font-mono font-bold">ORD-${t.id}</td>
-                            <td class="p-3 font-bold">${t.customerName}<br><span class="text-slate-400 font-normal">${t.phone}</span></td>
+                            <td class="p-3 font-bold">${t.customerName}</td>
                             <td class="p-3 font-black text-slate-800">${t.amount} ريال</td>
-                            <td class="p-3 font-medium text-slate-500">👤 ${t.techName}</td>
-                            <td class="p-3 text-center"><button onclick="restoreOrderFromTrashBinBackToMainCloud('${t.trashFirebaseKey}')" class="bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-200 font-bold">🔄 استرجاع للوحة</button></td>
+                            <td class="p-3 text-slate-500">👤 ${t.techName}</td>
+                            <td class="p-3 text-center"><button onclick="restoreOrderFromTrashBinBackToMainCloud('${t.trashFirebaseKey}')" class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded border border-emerald-200 font-bold shadow-sm">🔄 استرجاع للوحة</button></td>
                         </tr>`;
                 });
             }
@@ -793,6 +904,7 @@
                     let badgeColor = o.status.includes('تم')?'bg-green-50 text-green-700 border-green-200':(o.status==='جاري التركيب'?'bg-blue-50 text-blue-700 border-blue-200':'bg-amber-50 text-amber-700 border-amber-200');
                     if(o.status==='رفض التركيب' || o.status==='تأجيل التركيب') badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
                     let mapBtn = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="text-blue-500 underline font-bold">🗺️ خريطة</a>` : '';
+                    let profitMargin = parseFloat(o.amount || 0) - parseFloat(o.cost || 0);
                     
                     desktopTable.innerHTML += `
                         <tr class="border-b border-slate-100 hover:bg-slate-50/80 text-[11px]">
@@ -800,21 +912,22 @@
                             <td class="p-4 font-mono font-bold text-slate-900">ORD-${o.id}<br><span class="text-[9px] text-slate-400 font-sans font-normal">${o.time}</span></td>
                             <td class="p-4 font-bold text-slate-800">${o.customerName}<br><span class="text-slate-400 font-normal">${o.phone}</span></td>
                             <td class="p-4 text-slate-600 font-medium">${o.address} ${mapBtn}</td>
-                            <td class="p-4 font-black text-slate-900">${o.amount} ريال<br><span class="text-[9px] text-slate-400 font-normal">${o.inventoryNotes || ''}</span></td>
+                            <td class="p-4 font-black text-slate-900">${o.amount} ريال<br><span class="text-[9px] text-emerald-600 font-bold">📈 ربح: ${profitMargin} ريال</span><br><span class="text-[9px] text-slate-400 font-normal block max-w-[120px] truncate">${o.inventoryNotes || ''}</span></td>
                             <td class="p-4">
                                 <span class="px-2 py-0.5 rounded border font-black text-[10px] ${badgeColor}">${o.status}</span>
-                                ${o.taskTimer ? `<p class="text-[9px] text-indigo-600 font-bold mt-0.5">⏱️ تنفيذ: ${o.taskTimer} دقيقة</p>` : ''}
+                                ${o.taskTimer ? `<p class="text-[9px] text-indigo-600 font-bold mt-0.5">⏱️ زمن: ${o.taskTimer} دقيقة</p>` : ''}
                                 ${o.reason ? `<p class="text-[9px] text-rose-600 bg-rose-50 p-1 rounded mt-1 border border-rose-100 max-w-[150px]">💬 سبب: ${o.reason}</p>` : ''}
                             </td>
                             <td class="p-4 font-bold text-slate-500">👤 ${o.techName}<br><span class="text-amber-500 text-[10px]">⭐⭐⭐⭐⭐</span></td>
                             <td class="p-4 text-center">
                                 <div class="flex items-center justify-center gap-1">
+                                    <button onclick="openOrderDetailsFileReadOnly('${o.id}')" class="bg-slate-800 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="🔍 فتح ومعاينة الملف المستندي الكلي">🔍</button>
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'جاري التركيب')" class="bg-blue-600 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="جاري التركيب">🚚</button>
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="تم التركيب">✅</button>
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تأجيل التركيب')" class="bg-amber-500 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="تأجيل">⏳</button>
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white text-[9px] px-1.5 py-1 rounded font-bold" title="رفض">🛑</button>
-                                    <button onclick="sendOrderDetailsToWhatsApp('${o.customerName}', '${o.id}', '${o.address}', '${o.amount}', '${o.details}', '${o.locationUrl}', '${o.inventoryNotes}')" class="admin-only bg-green-500 text-white text-[9px] px-1.5 py-1 rounded font-bold hidden" title="ارسال للواتساب">💬</button>
-                                    ${currentActiveUser.role==='مدير'?`<button onclick="openEditOrderModal('${o.firebaseKey}','${o.customerName}','${o.phone}','${o.address}','${o.locationUrl}',${o.amount},'${o.techName}','${o.details}','${o.inventoryNotes}')" class="bg-slate-100 text-slate-700 text-[9px] px-1.5 py-1 rounded border hover:bg-slate-200">✏️</button>`:''}
+                                    <button onclick="sendOrderDetailsToWhatsApp('${o.customerName}', '${o.id}', '${o.address}', '${o.amount}', '${o.details}', '${o.locationUrl}', '${o.inventoryNotes}', ${o.cost})" class="admin-only bg-green-500 text-white text-[9px] px-1.5 py-1 rounded font-bold hidden" title="ارسال للواتساب">💬</button>
+                                    ${currentActiveUser.role==='مدير'?`<button onclick="openEditOrderModal('${o.firebaseKey}','${o.customerName}','${o.phone}','${o.address}','${o.locationUrl}',${o.amount},'${o.techName}','${o.details}','${o.inventoryNotes}',${o.cost})" class="bg-slate-100 text-slate-700 text-[9px] px-1.5 py-1 rounded border hover:bg-slate-200">✏️</button>`:''}
                                     ${currentActiveUser.role==='مدير'?`<button onclick="moveOrderToSecureTrashBinCloud('${o.firebaseKey}')" class="bg-red-50 text-red-600 text-[9px] px-1.5 py-1 rounded border border-red-200 hover:bg-red-100">🗑️</button>`:''}
                                 </div>
                             </td>
@@ -822,6 +935,7 @@
                 });
             }
 
+            // [تحديث كروت الموبايل]: إضافة مربع الاختيار (Checkbox) وفتح المعاينة المستندية السريعة
             const mobileCardsContainer = document.getElementById('mainOrdersCardsContainerMobile');
             if(mobileCardsContainer) {
                 mobileCardsContainer.innerHTML = '';
@@ -831,7 +945,11 @@
                     let locAction = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="flex-1 bg-blue-50 text-blue-700 border border-blue-200 text-center py-2 rounded-xl text-xs font-black">📍 الخريطة والـ GPS</a>` : '';
                     
                     mobileCardsContainer.innerHTML += `
-                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-right">
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3 text-right relative">
+                            <div class="absolute left-4 top-14 z-10 scale-125">
+                                <input type="checkbox" class="order-row-checkbox w-4 h-4 text-pink-600" data-id="${o.id}">
+                            </div>
+
                             <div class="flex justify-between items-start border-b pb-2">
                                 <div><span class="text-[10px] bg-slate-900 text-white font-mono px-2 py-0.5 rounded font-bold">#ORD-${o.id}</span><p class="text-[9px] text-slate-400 mt-1">${o.time}</p></div>
                                 <span class="text-[10px] px-2 py-0.5 rounded border font-black ${badgeColor}">${o.status}</span>
@@ -845,6 +963,7 @@
                                 ${o.reason ? `<p class="text-[10px] font-bold text-rose-600 bg-rose-50 p-2 rounded border border-rose-100">💬 السبب: ${o.reason}</p>` : ''}
                             </div>
                             <div class="flex justify-between items-center bg-slate-50 p-2 border rounded-xl text-xs"><span class="font-bold text-slate-400">الحساب المطلوب:</span><span class="font-black text-emerald-600">${o.amount} ريال</span></div>
+                            
                             <div class="flex flex-col gap-1.5 pt-1">
                                 ${locAction}
                                 <div class="grid grid-cols-2 gap-1.5">
@@ -853,27 +972,36 @@
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'تأجيل التركيب')" class="bg-amber-500 text-white font-bold py-2 rounded-xl text-xs">⏳ تأجيل</button>
                                     <button onclick="updateOrderStatusWithReason('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white font-bold py-2 rounded-xl text-xs">🛑 رفض الطلب</button>
                                 </div>
-                                
+                                <div class="grid grid-cols-1 mt-1">
+                                    <button onclick="openOrderDetailsFileReadOnly('${o.id}')" class="w-full bg-slate-100 border text-slate-800 font-black py-2 rounded-xl text-xs">🔍 فتح ومعاينة وثائق الملف كاملة</button>
+                                </div>
                                 ${currentActiveUser.role === 'مدير' ? `
                                 <div class="grid grid-cols-3 gap-1.5 pt-2 border-t border-slate-100 mt-1">
-                                    <button onclick="openEditOrderModal('${o.firebaseKey}','${o.customerName}','${o.phone}','${o.address}','${o.locationUrl}',${o.amount},'${o.techName}','${o.details}','${o.inventoryNotes}')" class="bg-slate-800 text-white font-bold py-2 rounded-xl text-[10px] shadow">✏️ تعديل</button>
-                                    <button onclick="sendOrderDetailsToWhatsApp('${o.customerName}', '${o.id}', '${o.address}', '${o.amount}', '${o.details}', '${o.locationUrl}', '${o.inventoryNotes}')" class="bg-green-600 text-white font-bold py-2 rounded-xl text-[10px] shadow">💬 واتساب</button>
+                                    <button onclick="openEditOrderModal('${o.firebaseKey}','${o.customerName}','${o.phone}','${o.address}','${o.locationUrl}',${o.amount},'${o.techName}','${o.details}','${o.inventoryNotes}',${o.cost})" class="bg-slate-800 text-white font-bold py-2 rounded-xl text-[10px] shadow">✏️ تعديل</button>
+                                    <button onclick="sendOrderDetailsToWhatsApp('${o.customerName}', '${o.id}', '${o.address}', '${o.amount}', '${o.details}', '${o.locationUrl}', '${o.inventoryNotes}', ${o.cost})" class="bg-green-600 text-white font-bold py-2 rounded-xl text-[10px] shadow">💬 الواتساب</button>
                                     <button onclick="moveOrderToSecureTrashBinCloud('${o.firebaseKey}')" class="bg-red-50 border border-red-200 text-red-600 font-bold py-2 rounded-xl text-[10px]">🗑️ حذف</button>
-                                </div>
-                                ` : ''}
+                                </div>` : ''}
                             </div>
                         </div>`;
                 });
             }
 
-            let totalRev = 0; const finContainer = document.getElementById('financialTechTableBody');
+            let totalRev = 0; let totalPureProfit = 0;
+            const finContainer = document.getElementById('financialTechTableBody');
             if(finContainer) {
                 finContainer.innerHTML = '';
+                
+                globalOrders.forEach(o => {
+                    if(o.status.includes('تم التركيب')) {
+                        totalPureProfit += (parseFloat(o.amount || 0) - parseFloat(o.cost || 0));
+                    }
+                });
+
                 globalTechnicians.forEach(t => {
                     if(t.role !== 'مدير') totalRev += t.collected;
                     finContainer.innerHTML += `
                         <div class="bg-slate-50 p-3 rounded-xl border flex justify-between items-center text-xs">
-                            <div><p class="font-black text-slate-900">👤 ${t.name}</p><p class="text-[10px] text-slate-400">الطلبات المنفذة كاش: ${t.done}</p></div>
+                            <div><p class="font-black text-slate-900">👤 ${t.name}</p><p class="text-[10px] text-slate-400">الطلبات الميدانية كاش: ${t.done}</p></div>
                             <div class="flex items-center gap-2">
                                 <p class="font-black text-emerald-600 text-sm">${t.collected.toLocaleString()} ريال</p>
                                 ${currentActiveUser.role==='مدير'?`<button onclick="clearAndSettleTechFinancesCloud('${t.name}', ${t.collected})" class="bg-slate-900 text-white px-2.5 py-1 rounded-xl text-[10px] font-black hover:bg-pink-600 transition-all shadow">💵 تصفير العهدة</button>`:''}
@@ -881,15 +1009,8 @@
                         </div>`;
                 });
                 if(document.getElementById('fin-total-revenue')) document.getElementById('fin-total-revenue').innerText = totalRev.toLocaleString() + " ريال سعودي";
+                if(document.getElementById('fin-pure-profit')) document.getElementById('fin-pure-profit').innerText = totalPureProfit.toLocaleString() + " ريال سعودي";
             }
-
-            // تحديث كروت الإحصائيات الفوقية لـ لوحة التحكم
-            document.getElementById('dash-total').innerText = filteredOrders.length;
-            document.getElementById('dash-progress').innerText = filteredOrders.filter(o => o.status === 'في الانتظار').length;
-            document.getElementById('dash-current').innerText = filteredOrders.filter(o => o.status === 'جاري التركيب').length;
-            document.getElementById('dash-success').innerText = filteredOrders.filter(o => o.status.includes('تم التركيب')).length;
-            document.getElementById('dash-cancel').innerText = filteredOrders.filter(o => o.status === 'رفض التركيب' || o.status === 'تأجيل التركيب').length;
-            document.getElementById('badge-orders-count').innerText = globalOrders.length;
 
             const cardsGrid = document.getElementById('techCardsGrid');
             if(cardsGrid) {
@@ -923,7 +1044,6 @@
 
             let matchedUser = null;
 
-            // الفحص الفوري المرن لحساب المدير لفتح البوابة مباشرة
             if (emailInput === adminAccount.email.toLowerCase() && passwordInput === adminAccount.password) {
                 matchedUser = {
                     name: adminAccount.name, email: adminAccount.email, password: adminAccount.password,
@@ -932,6 +1052,7 @@
             } else {
                 matchedUser = globalTechnicians.find(t => t.email && t.email.toLowerCase() === emailInput && t.password === passwordInput);
             }
+
             if (matchedUser) {
                 currentActiveUser = matchedUser;
                 localStorage.setItem('eagle_tech_active_user_session', JSON.stringify({ email: emailInput, password: passwordInput }));
