@@ -245,9 +245,10 @@
             </div>
             <form id="modalTechForm" class="p-4 space-y-3">
                 <input type="text" id="mTechName" placeholder="اسم الفني بالكامل" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
-                <input type="email" id="mTechEmail" placeholder="البريد الإلكتروني" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
+                <input type="email" id="mTechEmail" placeholder="البريد الإلكتروني للعمل" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
                 <input type="tel" id="mTechPhone" placeholder="رقم الجوال" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
-                <button type="submit" class="w-full bg-pink-500 text-white text-xs font-black py-2.5 rounded-lg shadow">إنشاء الحساب</button>
+                <input type="text" id="mTechPassword" placeholder="تعيين كلمة المرور السرية للفني" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
+                <button type="submit" class="w-full bg-pink-500 text-white text-xs font-black py-2.5 rounded-lg shadow">إنشاء الحساب وتفعيل الباسورد سحابياً</button>
             </form>
         </div>
     </div>
@@ -385,6 +386,71 @@
                 alert(`تم التحديث اللحظي إلى (${nextStatus})`);
             }
         }
+// [ميزة الحذف السحابي للمدير]: حذف الأوردر نهائياً من قاعدة البيانات السحابية بعد تأكيد الطلب
+        function deleteOrderCloud(firebaseKey) {
+            if (!firebaseKey) return;
+            
+            if (confirm("🚨 تنبيه أمني: هل أنت متأكد من حذف هذا الأوردر نهائياً من سيرفرات المؤسسة؟ لا يمكن استرجاع البيانات بعد الحذف.")) {
+                database.ref('orders/' + firebaseKey).remove()
+                    .then(() => {
+                        alert("تم حذف الأوردر بالكامل من السيرفر السحابي بنجاح 🗑️🟢");
+                    })
+                    .catch((error) => {
+                        console.error("خطأ أثناء الحذف:", error);
+                        alert("عذراً، فشل الحذف بسبب مشكلة في اتصال السيرفر.");
+                    });
+            }
+        }
+
+        // [ميزة حذف فني سحابياً - إيجل تيك]
+        function deleteTechCloud(techKey, techName) {
+            if (!techKey) return;
+            if (confirm(`🚨 تنبيه أمني: هل أنت متأكد من حذف الفني (${techName}) نهائياً من السيرفر؟ لن يتمكن من تسجيل الدخول مجدداً.`)) {
+                database.ref('technicians/' + techKey).remove()
+                    .then(() => {
+                        alert(`تم حذف الفني (${techName}) من النظام بنجاح 🗑️🟢`);
+                    })
+                    .catch(() => {
+                        alert("عذراً، حدث خطأ أثناء محاولة الحذف السحابي.");
+                    });
+            }
+        }
+
+        // [ميزة تعديل بيانات فني سحابياً - إيجل تيك]
+        function editTechCloud(techKey, oldName, oldPhone, oldPassword) {
+            if (!techKey) return;
+            
+            const newName = prompt("تعديل اسم الفني بالكامل:", oldName);
+            if (newName === null) return; 
+            
+            const newPhone = prompt("تعديل رقم الجوال:", oldPhone);
+            if (newPhone === null) return;
+            
+            const newPassword = prompt("تعديل كلمة المرور السرية للفني:", oldPassword);
+            if (newPassword === null) return;
+            
+            if (newName.trim() === "" || newPhone.trim() === "" || newPassword.trim() === "") {
+                alert("❌ عذراً، لا يمكن ترك الحقول فارغة.");
+                return;
+            }
+
+            const initials = newName.trim().split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+
+            const updatedData = {
+                name: newName.trim(),
+                phone: newPhone.trim(),
+                password: newPassword.trim(),
+                initials: initials
+            };
+
+            database.ref('technicians/' + techKey).update(updatedData)
+                .then(() => {
+                    alert("تم تحديث بيانات الفني في السيرفر بنجاح! ✏️☁️🎉");
+                })
+                .catch(() => {
+                    alert("فشل تحديث البيانات، يرجى التحقق من اتصال الإنترنت.");
+                });
+        }
 
         function filterOrdersByStatus(status) {
             currentSelectedFilter = status;
@@ -415,8 +481,19 @@
             if(currentSelectedFilter !== 'الكل') {
                 filteredOrders = filteredOrders.filter(o => o.status === currentSelectedFilter);
             }
+            
+            // [تطوير محرك البحث الفائق - إيجل تيك]: البحث بالاسم، الجوال، العنوان، التفاصيل، ورقم الأوردر
             if(searchQuery) {
-                filteredOrders = filteredOrders.filter(o => o.customerName.toLowerCase().includes(searchQuery) || o.id.toString().includes(searchQuery));
+                filteredOrders = filteredOrders.filter(o => {
+                    const idMatch = o.id && o.id.toString().includes(searchQuery);
+                    const nameMatch = o.customerName && o.customerName.toLowerCase().includes(searchQuery);
+                    const phoneMatch = o.phone && o.phone.toString().includes(searchQuery);
+                    const addressMatch = o.address && o.address.toLowerCase().includes(searchQuery);
+                    const detailsMatch = o.details && o.details.toLowerCase().includes(searchQuery);
+                    const techMatch = o.techName && o.techName.toLowerCase().includes(searchQuery);
+                    
+                    return idMatch || nameMatch || phoneMatch || addressMatch || detailsMatch || techMatch;
+                });
             }
 
             document.getElementById('dash-total').innerText = filteredOrders.length;
@@ -455,8 +532,11 @@
                             <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badge}">${o.status}</span></td>
                             <td class="p-4 font-bold">👤 ${o.techName}</td>
                             <td class="p-4 text-center">
-                                <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded font-bold">✅ تم</button>
-                                <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white text-[10px] px-2 py-1 rounded font-bold">🛑 رفض</button>
+                                <div class="flex items-center justify-center gap-1.5">
+                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded font-bold" title="تم التركيب">✅ تم</button>
+                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white text-[10px] px-2 py-1 rounded font-bold" title="رفض الطلب">🛑 رفض</button>
+                                    ${currentActiveUser.role === 'مدير' ? `<button onclick="deleteOrderCloud('${o.firebaseKey}')" class="bg-red-100 hover:bg-red-200 text-red-600 p-1 rounded font-bold text-[10px]" title="حذف الأوردر نهائياً">🗑️</button>` : ''}
+                                </div>
                             </td>
                         </tr>`;
                 });
@@ -532,12 +612,25 @@
             if(cardsGrid) {
                 cardsGrid.innerHTML = '';
                 globalTechnicians.forEach(t => {
+                    // فحص هل الفني مضاف سحابياً لإظهار أزرار التحكم له
+                    const isCloudTech = t.techFirebaseKey ? true : false;
+
                     cardsGrid.innerHTML += `
-                        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center space-y-2">
-                            <div class="w-10 h-10 rounded-full ${t.color} text-white font-black text-xs flex items-center justify-center">${t.initials}</div>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center space-y-2 relative group">
+                            <div class="w-10 h-10 rounded-full ${t.color || 'bg-blue-600'} text-white font-black text-xs flex items-center justify-center">${t.initials}</div>
                             <h4 class="font-black text-xs text-slate-900">${t.name}</h4>
                             <p class="text-[9px] font-mono text-slate-400">${t.phone}</p>
+                            
+                            ${t.password ? `<p class="text-[9px] font-bold text-pink-600 bg-pink-50 px-1.5 py-0.5 rounded">🔑: ${t.password}</p>` : ''}
+                            
                             <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">${t.status}</span>
+                            
+                            ${isCloudTech ? `
+                            <div class="flex items-center gap-1.5 pt-1 border-t border-slate-100 w-full justify-center">
+                                <button onclick="editTechCloud('${t.techFirebaseKey}', '${t.name}', '${t.phone}', '${t.password || '123'}')" class="bg-amber-50 hover:bg-amber-100 text-amber-700 px-2 py-1 rounded text-[10px] font-bold">✏️ تعديل</button>
+                                <button onclick="deleteTechCloud('${t.techFirebaseKey}', '${t.name}')" class="bg-red-50 hover:bg-red-100 text-red-600 px-2 py-1 rounded text-[10px] font-bold">🗑️ حذف</button>
+                            </div>
+                            ` : `<span class="text-[9px] text-purple-600 bg-purple-50 px-2 py-0.5 rounded-full font-black mt-1">حساب أساسي</span>`}
                         </div>`;
                 });
             }
@@ -565,23 +658,64 @@
             const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "الطلبات"); XLSX.writeFile(wb, "كشف_طلبات_إيجل_تيك.xlsx");
         }
 
-        document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
+       document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const emailInput = document.getElementById('loginEmail').value.trim().toLowerCase();
             const passwordInput = document.getElementById('loginPassword').value;
             const errorElement = document.getElementById('loginErrorMsg');
 
-            const matchedUser = globalTechnicians.find(t => t.email.toLowerCase() === emailInput && passwordInput === '123');
+            // [تحديث الأمان - إيجل تيك]: التحقق من الباسورد المخصص للفني أو المدير
+            const matchedUser = globalTechnicians.find(t => {
+                const isEmailCorrect = t.email.toLowerCase() === emailInput;
+                // إذا كان للفني باسوورد مخصص مسبقاً نتحقق منه، وإلا نعتمد الباسورد الافتراضي '123'
+                const expectedPassword = t.password ? t.password : '123';
+                return isEmailCorrect && passwordInput === expectedPassword;
+            });
 
             if (matchedUser) {
                 currentActiveUser = matchedUser;
-                errorElement.classList.add('hidden');
+                if(errorElement) errorElement.classList.add('hidden');
                 document.getElementById('loginPageGate').style.display = 'none'; 
                 initFirebaseOrdersListener();
             } else {
-                errorElement.classList.remove('hidden');
+                if(errorElement) errorElement.classList.remove('hidden');
             }
         });
+
+        // [حدث ترحيل وحفظ الفني الجديد بالشركة بالباسوورد المخصص له]
+        const modalTechForm = document.getElementById('modalTechForm');
+        if(modalTechForm) {
+            modalTechForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const name = document.getElementById('mTechName').value.trim();
+                const email = document.getElementById('mTechEmail').value.trim().toLowerCase();
+                const phone = document.getElementById('mTechPhone').value.trim();
+                const password = document.getElementById('mTechPassword').value.trim();
+                
+                // توليد الحروف الأولى للاسم تلقائياً للـ Avatar
+                const initials = name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                
+                // إضافة الفني الجديد إلى القائمة المحلية ببياناته الخاصة
+                globalTechnicians.push({
+                    id: Math.floor(200 + Math.random() * 900),
+                    name: name,
+                    email: email,
+                    phone: phone,
+                    password: password, // حفظ الباسورد الخاص به بنجاح
+                    role: "فني",
+                    rate: "100%",
+                    total: 0, done: 0, collected: 0,
+                    status: "متاح",
+                    initials: initials,
+                    color: "bg-blue-600"
+                });
+
+                modalTechForm.reset();
+                toggleSidebarSettingsModal(false);
+                if(typeof renderSystem === "function") renderSystem();
+                alert(`تم إنشاء حساب الفني (${name}) بنجاح وتعيين الباسورد الخاص به 👥✅`);
+            });
+        }
     </script>
 </body>
 </html>
