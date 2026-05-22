@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eagle Tech - منظومة سحابية مع محاكي ديمو متجاوب</title>
+    <title>Eagle Tech - منظومة سحابية متوافقة مع الجوال</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
@@ -16,236 +16,207 @@
         body { font-family: 'Cairo', sans-serif; }
         .tab-content { display: none; }
         .tab-content.active { display: block; }
-        
-        /* تأثيرات إطار المحاكاة الذكي */
-        #simulatorContainer {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .sim-phone {
-            border: 12px solid #1e293b;
-            border-radius: 36px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            max-height: 85vh;
-        }
-        .sim-tablet {
-            border: 14px solid #1e293b;
-            border-radius: 24px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            max-height: 88vh;
-        }
     </style>
 </head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
 
-<body class="bg-slate-900 min-h-screen flex flex-col overflow-hidden">
-
-    <div class="bg-slate-950 border-b border-slate-800 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3 z-[200]">
-        <div class="flex items-center gap-2">
-            <span class="text-xl">🛠️</span>
-            <div class="text-right">
-                <p class="text-white text-xs font-black">شريط محاكاة التوافق (Eagle Demo)</p>
-                <p class="text-[10px] text-slate-400">اضغط على الأجهزة بالأسفل لمشاهدة كيف يتحول السيستم تلقائياً</p>
+    <div id="loginPageGate" class="fixed inset-0 bg-[#0f172a] z-[150] flex items-center justify-center p-4">
+        <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-center">
+            <div class="space-y-2">
+                <span class="text-4xl">🦅</span>
+                <h2 class="text-white font-black text-xl">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
+                <p class="text-xs text-slate-400 font-bold">يرجى تسجيل الدخول لصلاحيات الأسطول والفنيين</p>
             </div>
+            
+            <form id="systemLoginForm" class="space-y-4 text-right">
+                <div class="space-y-1">
+                    <label class="text-[11px] font-bold text-slate-400 mr-1">البريد الإلكتروني للعمل:</label>
+                    <input type="email" id="loginEmail" placeholder="name@eagle.com" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[11px] font-bold text-slate-400 mr-1">كلمة المرور السرية:</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
+                </div>
+                
+                <div id="loginErrorMsg" class="hidden text-[11px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg text-center">
+                    ⚠️ الإيميل أو كلمة المرور غير صحيحة!
+                </div>
+
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-xl shadow-md transition-all">
+                    تسجيل الدخول الآمن ←
+                </button>
+            </form>
+            <p class="text-[9px] text-slate-600 font-bold">نظام تشفير سحابي محمي ماليًا © 2026</p>
+        </div>
+    </div>
+
+    <header class="md:hidden bg-[#121829] text-white p-4 flex justify-between items-center z-40 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+            <span class="text-xl">🦅</span>
+            <span class="font-black text-sm">Eagle <span class="text-pink-500">Tech</span></span>
+        </div>
+        <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg focus:outline-none text-pink-500 font-black text-lg">☰</button>
+    </header>
+
+    <aside id="sidebarMenu" class="fixed inset-y-0 right-0 transform translate-x-full md:relative md:translate-x-0 w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full md:h-screen z-50 border-l border-slate-800 transition-transform duration-300 ease-in-out">
+        <div class="space-y-6">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">🦅</span>
+                    <span class="text-white font-black text-lg tracking-wide">Eagle <span class="text-pink-500">Tech</span></span>
+                </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded">إغلاق ×</button>
+            </div>
+
+            <nav class="space-y-1">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-white bg-slate-800 text-white">
+                    <span>📊 لوحة التحكم</span>
+                </button>
+                <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2">📋 الطلبات والأوردرات</span>
+                    <span id="badge-orders-count" class="bg-pink-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">0</span>
+                </button>
+                <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span>💰 المالية والمحفظة</span>
+                </button>
+                <button onclick="switchTab('techs')" id="nav-techs" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span>👥 إدارة الفنيين</span>
+                </button>
+            </nav>
         </div>
         
-        <div class="flex items-center gap-1.5 bg-slate-900 p-1 rounded-xl border border-slate-800 text-[11px] font-bold">
-            <button onclick="setSimMode('desktop')" id="sim-desktop" class="px-3 py-1.5 rounded-lg text-white bg-pink-500 transition-all">🖥️ كمبيوتر / لاب توب</button>
-            <button onclick="setSimMode('ipad')" id="sim-ipad" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">📟 آيباد / تابلت</button>
-            <button onclick="setSimMode('iphone')" id="sim-iphone" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">📱 آيفون 15</button>
-            <button onclick="setSimMode('android')" id="sim-android" class="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white transition-all">🤖 أندرويد (جالكسي)</button>
+        <div class="border-t border-slate-800 pt-4 text-center">
+            <p class="text-[10px] text-slate-500 font-bold">Eagle Tech © 2026</p>
         </div>
+    </aside>
 
-        <div class="text-left hidden sm:block">
-            <span class="text-[10px] bg-pink-500/10 border border-pink-500/20 text-pink-400 px-2.5 py-1 rounded font-mono font-bold">حالة البث: LIVE سحابي</span>
-        </div>
-    </div>
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 flex-shrink-0 z-20">
+            <div class="w-full md:w-85 relative">
+                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث السريع برقم الأوردر أو العميل..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
+                <span class="absolute right-3 top-3 text-xs text-slate-400">🔍</span>
+            </div>
+            <div class="flex justify-between md:justify-end items-center w-full md:w-auto gap-4 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-bold text-slate-400">الحساب:</span>
+                    <span id="activeUserNameText" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-[11px] px-2.5 py-1 rounded-lg">جاري التحميل...</span>
+                </div>
+            </div>
+        </header>
 
-    <div class="flex-1 w-full flex items-center justify-center p-2 md:p-4 bg-slate-900 overflow-hidden">
-        <div id="simulatorContainer" class="w-full h-full bg-slate-50 flex flex-col md:flex-row overflow-hidden">
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
 
-            <div id="loginPageGate" class="absolute inset-0 bg-[#0f172a] z-[150] flex items-center justify-center p-4">
-                <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-center">
-                    <div class="space-y-2">
-                        <span class="text-4xl">🦅</span>
-                        <h2 class="text-white font-black text-xl">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
-                        <p class="text-xs text-slate-400 font-bold">يرجى تسجيل الدخول لصلاحيات الأسطول والفنيين</p>
+            <div id="tab-dashboard" class="tab-content active space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400">إجمالي طلبات النظام</p>
+                            <p id="dash-total" class="text-xl font-black text-slate-900">0</p>
+                        </div>
+                        <span class="text-xl bg-blue-50 p-2.5 rounded-xl">📦</span>
                     </div>
-                    
-                    <form id="systemLoginForm" class="space-y-4 text-right">
-                        <div class="space-y-1">
-                            <label class="text-[11px] font-bold text-slate-400 mr-1">البريد الإلكتروني للعمل:</label>
-                            <input type="email" id="loginEmail" placeholder="name@eagle.com" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400">قيد التنفيذ والمتابعة</p>
+                            <p id="dash-progress" class="text-xl font-black text-amber-600">0</p>
                         </div>
-                        <div class="space-y-1">
-                            <label class="text-[11px] font-bold text-slate-400 mr-1">كلمة المرور السرية:</label>
-                            <input type="password" id="loginPassword" placeholder="••••••••" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
+                        <span class="text-xl bg-amber-50 p-2.5 rounded-xl">🚚</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400">تم تسليمها وتركيبها</p>
+                            <p id="dash-success" class="text-xl font-black text-emerald-600">0</p>
                         </div>
-                        
-                        <div id="loginErrorMsg" class="hidden text-[11px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg text-center">
-                            ⚠️ الإيميل أو كلمة المرور غير صحيحة!
+                        <span class="text-xl bg-emerald-50 p-2.5 rounded-xl">✅</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-[11px] font-bold text-slate-400">بلاغات المشاكل والرفض</p>
+                            <p id="dash-cancel" class="text-xl font-black text-red-600">0</p>
                         </div>
+                        <span class="text-xl bg-red-50 p-2.5 rounded-xl">⚠️</span>
+                    </div>
+                </div>
 
-                        <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-xl shadow-md transition-all">
-                            تسجيل الدخول الآمن ←
-                        </button>
-                    </form>
-                    <p class="text-[9px] text-slate-600 font-bold">نظام تشفير سحابي محمي ماليًا © 2026</p>
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 hidden md:grid">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 h-64">
+                        <canvas id="dashLineChart"></canvas>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 h-64 flex flex-col justify-between">
+                        <canvas id="dashPieChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-black text-xs text-slate-700">📋 أحدث التحركات الميدانية</h3>
+                        <button onclick="switchTab('orders')" class="text-xs text-pink-500 font-bold">عرض الكل ←</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-right text-slate-500">
+                            <tbody id="dashLatestOrdersTable"></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <header id="mobileHamburgerHeader" class="hidden bg-[#121829] text-white p-4 flex justify-between items-center z-40 border-b border-slate-800 flex-shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">🦅</span>
-                    <span class="font-black text-sm">Eagle <span class="text-pink-500">Tech</span></span>
+            <div id="tab-orders" class="tab-content space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-2 w-full sm:w-auto">
+                        <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="flex-1 sm:flex-none bg-pink-500 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md">+ طلب جديد</button>
+                        <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">تصدير Excel</button>
+                    </div>
+                    <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-[10px] font-bold w-full sm:w-auto overflow-x-auto">
+                        <button onclick="filterOrdersByStatus('الكل')" class="px-3 py-1.5 rounded-lg text-slate-700 bg-white shadow-sm whitespace-nowrap">الكل</button>
+                        <button onclick="filterOrdersByStatus('في الانتظار')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">معلق</button>
+                        <button onclick="filterOrdersByStatus('تم التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">تم</button>
+                        <button onclick="filterOrdersByStatus('رفض التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">مشكلة</button>
+                    </div>
                 </div>
-                <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg text-pink-500 font-black text-lg">☰</button>
-            </header>
 
-            <aside id="sidebarMenu" class="bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 z-50 border-l border-slate-800 transition-all duration-300">
-                <div class="space-y-6">
-                    <div class="flex items-center justify-between border-b border-slate-800 pb-4">
-                        <div class="flex items-center gap-2">
-                            <span class="text-2xl">🦅</span>
-                            <span class="text-white font-black text-lg tracking-wide">Eagle <span class="text-pink-500">Tech</span></span>
-                        </div>
-                        <button id="sidebarCloseBtn" onclick="toggleMobileMenu()" class="hidden text-slate-400 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded">إغلاق ×</button>
-                    </div>
-
-                    <nav class="space-y-1">
-                        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-white bg-slate-800 text-white">
-                            <span>📊 لوحة التحكم</span>
-                        </button>
-                        <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                            <span class="flex items-center gap-2">📋 الطلبات والأوردرات</span>
-                            <span id="badge-orders-count" class="bg-pink-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">0</span>
-                        </button>
-                        <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                            <span>💰 المالية والمحفظة</span>
-                        </button>
-                        <button onclick="switchTab('techs')" id="nav-techs" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                            <span>👥 إدارة الفنيين</span>
-                        </button>
-                    </nav>
+                <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <table class="w-full text-xs text-right text-slate-500">
+                        <thead class="bg-slate-100 border-b border-slate-200 text-slate-700">
+                            <tr>
+                                <th class="p-4 font-bold">رقم الطلب</th>
+                                <th class="p-4 font-bold">العميل والجوال</th>
+                                <th class="p-4 font-bold">المسار والعنوان</th>
+                                <th class="p-4 font-bold">المبلغ والتفاصيل</th>
+                                <th class="p-4 font-bold">الحالة</th>
+                                <th class="p-4 font-bold">الفني</th>
+                                <th class="p-4 font-bold text-center">الإجراء</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mainOrdersTableBodyDesktop"></tbody>
+                    </table>
                 </div>
-                <div class="border-t border-slate-800 pt-4 text-center">
-                    <p class="text-[10px] text-slate-500">Eagle Tech © 2026</p>
+
+                <div id="mainOrdersCardsContainerMobile" class="md:hidden space-y-3">
+                    </div>
+            </div>
+
+            <div id="tab-financial" class="tab-content space-y-6">
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-emerald-500">
+                    <p class="text-xs font-bold text-slate-400 mb-1">الإيراد السحابي الكلي المعتمد</p>
+                    <p id="fin-total-revenue" class="text-xl font-black text-slate-900">0 ريال</p>
                 </div>
-            </aside>
-
-            <div class="flex-1 flex flex-col overflow-hidden h-full">
-                <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 flex-shrink-0 z-20">
-                    <div class="w-full sm:w-72 relative">
-                        <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث السريع..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
-                        <span class="absolute right-3 top-3 text-xs text-slate-400">🔍</span>
-                    </div>
-                    <div class="flex justify-between sm:justify-end items-center w-full sm:w-auto gap-4">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-[10px] font-bold text-slate-400">الحساب:</span>
-                            <span id="activeUserNameText" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-[10px] px-2 py-1 rounded-lg">جاري التحميل...</span>
-                        </div>
-                    </div>
-                </header>
-
-                <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
-
-                    <div id="tab-dashboard" class="tab-content active space-y-6">
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                                <div><p class="text-[11px] font-bold text-slate-400">إجمالي طلبات النظام</p><p id="dash-total" class="text-xl font-black text-slate-900">0</p></div>
-                                <span class="text-xl bg-blue-50 p-2 rounded-xl">📦</span>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                                <div><p class="text-[11px] font-bold text-slate-400">قيد التنفيذ</p><p id="dash-progress" class="text-xl font-black text-amber-600">0</p></div>
-                                <span class="text-xl bg-amber-50 p-2 rounded-xl">🚚</span>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                                <div><p class="text-[11px] font-bold text-slate-400">تم تركيبها</p><p id="dash-success" class="text-xl font-black text-emerald-600">0</p></div>
-                                <span class="text-xl bg-emerald-50 p-2 rounded-xl">✅</span>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                                <div><p class="text-[11px] font-bold text-slate-400">بلاغات المشاكل</p><p id="dash-cancel" class="text-xl font-black text-red-600">0</p></div>
-                                <span class="text-xl bg-red-50 p-2 rounded-xl">⚠️</span>
-                            </div>
-                        </div>
-
-                        <div id="chartsContainerRow" class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 h-56">
-                                <canvas id="dashLineChart"></canvas>
-                            </div>
-                            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 h-56 flex flex-col justify-between">
-                                <canvas id="dashPieChart"></canvas>
-                            </div>
-                        </div>
-
-                        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                            <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
-                                <h3 class="font-black text-xs text-slate-700">📋 أحدث التحركات الميدانية</h3>
-                            </div>
-                            <div class="overflow-x-auto">
-                                <table class="w-full text-xs text-right text-slate-500">
-                                    <tbody id="dashLatestOrdersTable"></tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div id="tab-orders" class="tab-content space-y-4">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                            <div class="flex items-center gap-2 w-full sm:w-auto">
-                                <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="flex-1 sm:flex-none bg-pink-500 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md">+ طلب جديد</button>
-                                <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl">تصدير Excel</button>
-                            </div>
-                            <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-[10px] font-bold w-full sm:w-auto overflow-x-auto">
-                                <button onclick="filterOrdersByStatus('الكل')" class="px-3 py-1.5 rounded-lg text-slate-700 bg-white shadow-sm whitespace-nowrap">الكل</button>
-                                <button onclick="filterOrdersByStatus('في الانتظار')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">معلق</button>
-                                <button onclick="filterOrdersByStatus('تم التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">تم</button>
-                                <button onclick="filterOrdersByStatus('رفض التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500 whitespace-nowrap">مشكلة</button>
-                            </div>
-                        </div>
-
-                        <div id="desktopOrdersTableContainer" class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                            <table class="w-full text-xs text-right text-slate-500">
-                                <thead class="bg-slate-100 border-b border-slate-200 text-slate-700">
-                                    <tr>
-                                        <th class="p-3 font-bold">رقم الطلب</th>
-                                        <th class="p-3 font-bold">العميل والجوال</th>
-                                        <th class="p-3 font-bold">المسار</th>
-                                        <th class="p-3 font-bold">المبلغ</th>
-                                        <th class="p-3 font-bold">الحالة</th>
-                                        <th class="p-3 font-bold">الفني</th>
-                                        <th class="p-3 font-bold text-center">الإجراء</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="mainOrdersTableBodyDesktop"></tbody>
-                            </table>
-                        </div>
-
-                        <div id="mainOrdersCardsContainerMobile" class="space-y-3"></div>
-                    </div>
-
-                    <div id="tab-financial" class="tab-content space-y-6">
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-emerald-500">
-                            <p class="text-xs font-bold text-slate-400 mb-1">الإيراد السحابي الكلي المعتمد</p>
-                            <p id="fin-total-revenue" class="text-xl font-black text-slate-900">0 ريال</p>
-                        </div>
-                        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                            <div id="financialTechTableBody" class="space-y-3"></div>
-                        </div>
-                    </div>
-
-                    <div id="tab-techs" class="tab-content space-y-6">
-                        <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-                            <h3 class="font-black text-xs text-slate-700">👥 الكادر الفني بالشركة</h3>
-                        </div>
-                        <div id="techCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"></div>
-                    </div>
-
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <div id="financialTechTableBody" class="space-y-3"></div>
                 </div>
+            </div>
+
+            <div id="tab-techs" class="tab-content space-y-6">
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-black text-xs text-slate-700">👥 الكادر الفني</h3>
+                    <button id="btnRegisterNewTech" onclick="toggleSidebarSettingsModal(true)" class="bg-pink-500 text-white text-xs font-black px-3 py-2 rounded-xl shadow">+ فني جديد</button>
+                </div>
+                <div id="techCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4"></div>
             </div>
 
         </div>
     </div>
 
-    <div id="addOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[250] hidden flex items-center justify-center p-4">
+    <div id="addOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
             <div class="bg-[#121829] text-white px-5 py-4 flex justify-between items-center">
                 <h3 class="text-xs font-black">➕ استقبال وتوجيه أوردر ميداني جديد</h3>
@@ -261,7 +232,22 @@
                     <select id="moTech" class="text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none"></select>
                 </div>
                 <textarea id="moDetails" rows="3" placeholder="تفاصيل الكاميرات والمعدات المطلوبة..." class="w-full text-xs p-3 bg-slate-50 border rounded-lg focus:outline-none" required></textarea>
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-lg shadow">حفظ وتحويل الطلب سحابياً فوراً</button>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-lg shadow shadow-pink-500/20">حفظ وتحويل الطلب سحابياً فوراً</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="addTechModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-[#121829] text-white px-5 py-3 flex justify-between items-center">
+                <h3 class="text-xs font-black">➕ تسجيل حساب فني جديد</h3>
+                <button onclick="toggleSidebarSettingsModal(false)" class="text-slate-400 font-bold">✕</button>
+            </div>
+            <form id="modalTechForm" class="p-4 space-y-3">
+                <input type="text" id="mTechName" placeholder="اسم الفني بالكامل" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
+                <input type="email" id="mTechEmail" placeholder="البريد الإلكتروني" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
+                <input type="tel" id="mTechPhone" placeholder="رقم الجوال" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg" required>
+                <button type="submit" class="w-full bg-pink-500 text-white text-xs font-black py-2.5 rounded-lg shadow">إنشاء الحساب</button>
             </form>
         </div>
     </div>
@@ -292,65 +278,13 @@
         let currentActiveUser = null; 
         let globalOrders = [];
         let currentSelectedFilter = 'الكل';
-        let currentDeviceMode = 'desktop';
         let lineChartInstance = null;
         let pieChartInstance = null;
 
-        // دالة تحويل وضبط محاكاة ديمو الأجهزة اللحظي
-        function setSimMode(mode) {
-            currentDeviceMode = mode;
-            const container = document.getElementById('simulatorContainer');
-            const hamburgerHeader = document.getElementById('mobileHamburgerHeader');
-            const sidebar = document.getElementById('sidebarMenu');
-            const sidebarClose = document.getElementById('sidebarCloseBtn');
-            const desktopTableContainer = document.getElementById('desktopOrdersTableContainer');
-            const mobileCardsContainer = document.getElementById('mainOrdersCardsContainerMobile');
-            const chartsRow = document.getElementById('chartsContainerRow');
-
-            // تصفير الأزرار وتلوين النشط
-            document.querySelectorAll('[id^="sim-"]').forEach(btn => btn.classList.remove('bg-pink-500', 'text-white'));
-            document.querySelectorAll('[id^="sim-"]').forEach(btn => btn.classList.add('text-slate-400'));
-            document.getElementById(`sim-${mode}`).classList.remove('text-slate-400');
-            document.getElementById(`sim-${mode}`).classList.add('bg-pink-500', 'text-white');
-
-            // تصفير إطارات الحاضن
-            container.className = "bg-slate-50 flex overflow-hidden transition-all duration-300 ";
-
-            if (mode === 'desktop') {
-                container.classList.add('w-full', 'h-full', 'flex-row');
-                hamburgerHeader.classList.add('hidden');
-                sidebar.className = "w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800";
-                sidebarClose.classList.add('hidden');
-                if(desktopTableContainer) desktopTableContainer.classList.remove('hidden');
-                if(mobileCardsContainer) mobileCardsContainer.classList.add('hidden');
-                if(chartsRow) chartsRow.classList.remove('hidden');
-            } 
-            else if (mode === 'ipad') {
-                container.classList.add('w-[768px]', 'sim-tablet', 'flex-row');
-                hamburgerHeader.classList.add('hidden');
-                sidebar.className = "w-64 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800";
-                sidebarClose.classList.add('hidden');
-                if(desktopTableContainer) desktopTableContainer.classList.remove('hidden');
-                if(mobileCardsContainer) mobileCardsContainer.classList.add('hidden');
-                if(chartsRow) chartsRow.classList.remove('hidden');
-            } 
-            else if (mode === 'iphone' || mode === 'android') {
-                let widthClass = mode === 'iphone' ? 'w-[393px]' : 'w-[360px]';
-                container.classList.add(widthClass, 'sim-phone', 'flex-col');
-                hamburgerHeader.classList.remove('hidden');
-                // القائمة الجانبية تتحول لوضع منزلق مخفي بالجوال
-                sidebar.className = "fixed inset-y-0 right-0 transform translate-x-full w-64 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full border-l border-slate-800 z-50";
-                sidebarClose.classList.remove('hidden');
-                if(desktopTableContainer) desktopTableContainer.classList.add('hidden');
-                if(mobileCardsContainer) mobileCardsContainer.classList.remove('hidden');
-                if(chartsRow) chartsRow.classList.add('hidden'); // إخفاء الرسوم بالجوال لتجنب التكدس
-            }
-            renderSystem();
-        }
-
+        // دالة فتح وإغلاق قائمة الجوال باللمس
         function toggleMobileMenu() {
-            const sidebar = document.getElementById('sidebarMenu');
-            sidebar.classList.toggle('translate-x-full');
+            const menu = document.getElementById('sidebarMenu');
+            menu.classList.toggle('translate-x-full');
         }
 
         function switchTab(tabId) {
@@ -360,8 +294,10 @@
             const activeBtn = document.getElementById(`nav-${tabId}`);
             if(activeBtn) activeBtn.classList.add('bg-slate-800', 'text-white');
             
-            // إغلاق المنيو تلقائياً إذا كنا في وضع الجوال
-            if(currentDeviceMode === 'iphone' || currentDeviceMode === 'android') { toggleMobileMenu(); }
+            // إغلاق قائمة الجوال تلقائياً بعد الاختيار لسهولة التصفح
+            const menu = document.getElementById('sidebarMenu');
+            if(!menu.classList.contains('translate-x-full')) { menu.classList.add('translate-x-full'); }
+            
             if(tabId === 'dashboard') { renderDashboardCharts(); }
         }
 
@@ -383,7 +319,9 @@
         function updateTechSelectOptions() {
             const select = document.getElementById('moTech'); if(!select) return;
             select.innerHTML = '';
-            globalTechnicians.forEach(t => { select.innerHTML += `<option value="${t.name}">${t.name}</option>`; });
+            globalTechnicians.forEach(t => {
+                select.innerHTML += `<option value="${t.name}">${t.name}</option>`;
+            });
         }
 
         function initFirebaseOrdersListener() {
@@ -460,6 +398,14 @@
             
             document.getElementById('activeUserNameText').innerText = `${currentActiveUser.name} (${currentActiveUser.role})`;
             
+            if(currentActiveUser.role === 'فني') {
+                if(document.getElementById('btnAddNewOrderForm')) document.getElementById('btnAddNewOrderForm').classList.add('hidden');
+                if(document.getElementById('btnRegisterNewTech')) document.getElementById('btnRegisterNewTech').classList.add('hidden');
+            } else {
+                if(document.getElementById('btnAddNewOrderForm')) document.getElementById('btnAddNewOrderForm').classList.remove('hidden');
+                if(document.getElementById('btnRegisterNewTech')) document.getElementById('btnRegisterNewTech').classList.remove('hidden');
+            }
+
             const searchQuery = document.getElementById('globalSearch').value.toLowerCase();
             
             let filteredOrders = globalOrders;
@@ -479,80 +425,93 @@
             document.getElementById('dash-cancel').innerText = filteredOrders.filter(o => o.status === 'رفض التركيب').length;
             document.getElementById('badge-orders-count').innerText = globalOrders.length;
 
-            // ملخص جدول الرئيسية
+            // جدول شاشة الرئيسية المصغر
             const latestTable = document.getElementById('dashLatestOrdersTable');
             if(latestTable) {
                 latestTable.innerHTML = '';
-                filteredOrders.slice(0, 3).forEach(o => {
+                filteredOrders.slice(0, 5).forEach(o => {
                     latestTable.innerHTML += `
                         <tr class="border-b border-slate-100 text-[11px]">
                             <td class="p-3 font-bold text-blue-900">ORD-${o.id}</td>
                             <td class="p-3 font-medium">${o.customerName}</td>
-                            <td class="p-3 font-bold text-slate-500">👤 ${o.techName}</td>
+                            <td class="p-3 font-bold text-slate-700">👤 ${o.techName}</td>
                         </tr>`;
                 });
             }
 
-            // 1. حقن عارضة الكمبيوتر (Desktop)
+            // 1. ضخ جدول شاشة الكمبيوتر (Desktop)
             const desktopTable = document.getElementById('mainOrdersTableBodyDesktop');
             if(desktopTable) {
                 desktopTable.innerHTML = '';
                 filteredOrders.forEach(o => {
                     let badge = o.status === 'تم التركيب' ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700';
+                    let locBtn = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded font-bold">📍 خريطة</a>` : '';
                     desktopTable.innerHTML += `
-                        <tr class="border-b border-slate-100 text-[11px]">
-                            <td class="p-3 font-mono font-bold">ORD-${o.id}</td>
-                            <td class="p-3 font-bold">${o.customerName}</td>
-                            <td class="p-3 text-slate-500">${o.address}</td>
-                            <td class="p-3 font-bold">${o.amount} ريال</td>
-                            <td class="p-3"><span class="px-1.5 py-0.5 rounded border text-[10px] font-bold ${badge}">${o.status}</span></td>
-                            <td class="p-3 font-bold">👤 ${o.techName}</td>
-                            <td class="p-3 text-center">
-                                <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[10px] px-1.5 py-0.5 rounded font-bold">✅</button>
+                        <tr class="border-b border-slate-100 hover:bg-slate-50">
+                            <td class="p-4 font-mono font-bold">ORD-${o.id}<br><span class="text-[9px] text-slate-400">${o.time}</span></td>
+                            <td class="p-4 font-bold">${o.customerName}<br><span class="text-slate-400 font-normal">${o.phone}</span></td>
+                            <td class="p-4 text-slate-500">${o.address} ${locBtn}</td>
+                            <td class="p-4 font-bold">${o.amount} ريال</td>
+                            <td class="p-4"><span class="px-2 py-0.5 rounded border text-[10px] font-bold ${badge}">${o.status}</span></td>
+                            <td class="p-4 font-bold">👤 ${o.techName}</td>
+                            <td class="p-4 text-center">
+                                <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="bg-emerald-600 text-white text-[10px] px-2 py-1 rounded font-bold">✅ تم</button>
+                                <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-600 text-white text-[10px] px-2 py-1 rounded font-bold">🛑 رفض</button>
                             </td>
                         </tr>`;
                 });
             }
 
-            // 2. حقن عارضة كروت الجوال الحية (Mobile Cards)
+            // 2. [التطوير الجوهري]: ضخ كروت الجوال والايفون الذكية والمريحة باللمس الاصبعي
             const mobileCardsContainer = document.getElementById('mainOrdersCardsContainerMobile');
             if(mobileCardsContainer) {
                 mobileCardsContainer.innerHTML = '';
                 if(filteredOrders.length === 0) {
-                    mobileCardsContainer.innerHTML = `<div class="p-6 text-center text-slate-400 text-xs bg-white rounded-xl border">لا توجد أوردرات حالياً...</div>`;
+                    mobileCardsContainer.innerHTML = `<div class="p-8 text-center text-slate-400 text-xs font-bold bg-white rounded-2xl border">لا توجد أوردرات سحابية حالياً...</div>`;
                 }
                 filteredOrders.forEach(o => {
                     let badgeColor = o.status === 'تم التركيب' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-amber-50 text-amber-700 border-amber-200';
                     if(o.status === 'رفض التركيب') badgeColor = 'bg-rose-50 text-rose-700 border-rose-200';
-                    let locationAction = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="flex-1 bg-blue-50 text-blue-700 border border-blue-200 text-center py-2 rounded-xl text-xs font-black">📍 تتبع الـ GPS</a>` : '';
+                    
+                    let locationAction = o.locationUrl ? `<a href="${o.locationUrl}" target="_blank" class="flex-1 bg-blue-50 text-blue-700 border border-blue-200 text-center py-2 rounded-xl text-xs font-black">📍 تشغيل الـ GPS الخريطة</a>` : '';
                     
                     mobileCardsContainer.innerHTML += `
-                        <div class="bg-white p-3.5 rounded-xl border border-slate-200 shadow-sm space-y-2.5 text-right">
-                            <div class="flex justify-between items-center border-b border-slate-100 pb-1.5">
-                                <span class="text-[10px] bg-slate-900 text-white font-mono px-1.5 py-0.5 rounded font-bold">#ORD-${o.id}</span>
-                                <span class="text-[10px] px-2 py-0.5 rounded border font-black ${badgeColor}">${o.status}</span>
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                            <div class="flex justify-between items-start border-b border-slate-100 pb-2">
+                                <div>
+                                    <span class="text-[10px] bg-slate-900 text-white font-mono px-2 py-0.5 rounded font-bold">#ORD-${o.id}</span>
+                                    <p class="text-[9px] text-slate-400 mt-1 font-sans">${o.time}</p>
+                                </div>
+                                <span class="text-[10px] px-2.5 py-0.5 rounded-full border font-black ${badgeColor}">${o.status}</span>
                             </div>
-                            <div class="text-xs space-y-1">
-                                <p class="font-black text-slate-900">👤 العميل: ${o.customerName}</p>
-                                <p class="text-slate-500">📞 الجوال: <span class="text-pink-500 underline font-bold">${o.phone}</span></p>
-                                <p class="text-slate-600">📍 العنوان: <span class="font-bold text-slate-800">${o.address}</span></p>
+                            
+                            <div class="text-right space-y-1">
+                                <p class="text-xs font-black text-slate-900">👤 العميل: ${o.customerName}</p>
+                                <p class="text-xs font-bold text-slate-500">📞 الجوال: <a href="tel:${o.phone}" class="text-pink-500 underline">${o.phone}</a></p>
+                                <p class="text-xs text-slate-600">📍 المسار: <span class="font-bold text-slate-800">${o.address}</span></p>
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-100 mt-1">
+                                    <p class="text-[11px] text-slate-400 font-bold">المعدات والتفاصيل:</p>
+                                    <p class="text-[11px] text-slate-700 font-medium">${o.details}</p>
+                                </div>
                             </div>
-                            <div class="flex justify-between items-center bg-slate-50 p-2 rounded-lg border border-slate-100 text-[11px]">
-                                <span class="font-bold text-slate-400">حساب الأوردر:</span>
-                                <span class="font-black text-emerald-600">${o.amount} ريال</span>
+                            
+                            <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl border border-slate-100">
+                                <span class="text-[11px] font-bold text-slate-400">حساب الأوردر الكاش:</span>
+                                <span class="text-xs font-black text-emerald-600">${o.amount} ريال</span>
                             </div>
-                            <div class="flex flex-col gap-1.5 pt-1">
+
+                            <div class="flex flex-col gap-2 pt-1">
                                 ${locationAction}
-                                <div class="flex gap-1.5">
-                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="flex-1 bg-emerald-600 text-white font-black py-2 rounded-xl text-xs">✅ تم التركيب</button>
-                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-100 text-rose-700 font-bold px-3 py-2 rounded-xl text-xs">🛑 رفض</button>
+                                <div class="flex gap-2">
+                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'تم التركيب')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl text-xs shadow shadow-emerald-600/10">✅ تم التسليم والتركيب</button>
+                                    <button onclick="updateOrderStatusDirectly('${o.firebaseKey}', 'رفض التركيب')" class="bg-rose-100 hover:bg-rose-200 text-rose-700 font-bold px-4 py-2.5 rounded-xl text-xs">🛑 رفض</button>
                                 </div>
                             </div>
                         </div>`;
                 });
             }
 
-            // كروت المالية
+            // حقن كروت وكشوف الحسابات المالية للجوال
             let totalRev = 0;
             const finContainer = document.getElementById('financialTechTableBody');
             if(finContainer) {
@@ -560,24 +519,25 @@
                 globalTechnicians.forEach(t => {
                     totalRev += t.collected;
                     finContainer.innerHTML += `
-                        <div class="bg-slate-50 p-2.5 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
-                            <p class="font-black text-slate-900">👤 ${t.name}</p>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+                            <div><p class="font-black text-slate-900">👤 ${t.name}</p><p class="text-[10px] text-slate-400">${t.role}</p></div>
                             <p class="font-black text-emerald-600">${t.collected.toLocaleString()} ريال</p>
                         </div>`;
                 });
                 document.getElementById('fin-total-revenue').innerText = totalRev.toLocaleString() + " ريال";
             }
 
-            // كروت الفنيين
+            // كروت الفنيين الشاملة بالشركة
             const cardsGrid = document.getElementById('techCardsGrid');
             if(cardsGrid) {
                 cardsGrid.innerHTML = '';
                 globalTechnicians.forEach(t => {
                     cardsGrid.innerHTML += `
-                        <div class="bg-white p-3 rounded-xl border border-slate-200 flex flex-col items-center text-center space-y-1">
-                            <div class="w-8 h-8 rounded-full ${t.color} text-white font-black text-[11px] flex items-center justify-center">${t.initials}</div>
-                            <h4 class="font-black text-[11px] text-slate-900">${t.name}</h4>
-                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 border">${t.status}</span>
+                        <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-col items-center text-center space-y-2">
+                            <div class="w-10 h-10 rounded-full ${t.color} text-white font-black text-xs flex items-center justify-center">${t.initials}</div>
+                            <h4 class="font-black text-xs text-slate-900">${t.name}</h4>
+                            <p class="text-[9px] font-mono text-slate-400">${t.phone}</p>
+                            <span class="text-[9px] font-bold px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200">${t.status}</span>
                         </div>`;
                 });
             }
@@ -587,17 +547,22 @@
 
         function renderDashboardCharts() {
             const ctxLine = document.getElementById('dashLineChart');
-            if(ctxLine && currentDeviceMode === 'desktop') {
+            if(ctxLine) {
                 if(lineChartInstance) lineChartInstance.destroy();
                 lineChartInstance = new Chart(ctxLine.getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'],
-                        datasets: [{ label: 'المهمات', data: [170, 195, 210, 185, 230], backgroundColor: '#1e3a8a' }]
+                        labels: ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'],
+                        datasets: [{ label: 'المهمات', data: [170, 195, 210, 185, 230, 240, 247], backgroundColor: '#1e3a8a' }]
                     },
                     options: { responsive: true, maintainAspectRatio: false }
                 });
             }
+        }
+
+        function exportOrdersToExcel() {
+            const dataToExport = globalOrders.map(o => ({ "رقم الأوردر": `ORD-${o.id}`, "اسم العميل": o.customerName, "المسار / العنوان": o.address, "المبلغ مالي": o.amount, "الفني المكلف": o.techName, "الحالة": o.status }));
+            const ws = XLSX.utils.json_to_sheet(dataToExport); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "الطلبات"); XLSX.writeFile(wb, "كشف_طلبات_إيجل_تيك.xlsx");
         }
 
         document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
@@ -616,11 +581,6 @@
             } else {
                 errorElement.classList.remove('hidden');
             }
-        });
-
-        // تشغيل وضع الكمبيوتر افتراضياً عند الفتح
-        window.addEventListener('DOMContentLoaded', () => {
-            setSimMode('desktop');
         });
     </script>
 </body>
