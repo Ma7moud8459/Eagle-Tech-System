@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eagle Tech - المنظومة السحابية المتكاملة v2026</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="masterAppBody" class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <div id="loginPageGate" class="fixed inset-0 bg-[#0f172a] z-[150] flex items-center justify-center p-4">
+        <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-center">
+            <div class="space-y-2">
+                <span id="loginLogoIcon" class="text-5xl">🦅</span>
+                <h2 class="text-white font-black text-xl">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
+                <p class="text-xs text-slate-400 font-bold">تسجيل الدخول الموحد لإدارة الأسطول والميدان</p>
+            </div>
+            
+            <form id="systemLoginForm" class="space-y-4 text-right">
+                <div class="space-y-1">
+                    <label class="text-[11px] font-bold text-slate-400 mr-1">البريد الإلكتروني للعمل:</label>
+                    <input type="email" id="loginEmail" placeholder="name@eagle.com" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-[11px] font-bold text-slate-400 mr-1">كلمة المرور السرية:</label>
+                    <input type="password" id="loginPassword" placeholder="••••••••" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
+                </div>
+                
+                <div id="loginErrorMsg" class="hidden text-[11px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg text-center">
+                    ⚠️ بيانات الدخول غير صحيحة أو الحساب غير مفعل!
+                </div>
+
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-xl shadow-md transition-all">
+                    تسجيل الدخول الآمن ←
+                </button>
+            </form>
+            <p class="text-[9px] text-slate-600 font-bold">نظام محمي بالكامل سحابياً © 2026</p>
+        </div>
+    </div>
+
+    <header class="md:hidden bg-[#121829] text-white p-4 flex justify-between items-center z-40 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+            <span class="system-logo-span text-xl">🦅</span>
+            <span class="font-black text-sm">Eagle <span class="text-pink-500">Tech</span></span>
+        </div>
+        <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg focus:outline-none text-pink-500 font-black text-lg">☰</button>
+    </header>
+
+    <aside id="sidebarMenu" class="fixed inset-y-0 right-0 transform translate-x-full md:relative md:translate-x-0 w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full md:h-screen z-50 border-l border-slate-800 transition-transform duration-300 ease-in-out">
+        <div class="space-y-5 overflow-y-auto max-h-[75vh] pr-1">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+                <div class="flex items-center gap-2">
+                    <span class="system-logo-span text-2xl">🦅</span>
+                    <span class="text-white font-black text-lg tracking-wide">Eagle <span class="text-pink-500">Tech</span></span>
+                </div>
+                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded">إغلاق ×</button>
+            </div>
+
+            <nav class="space-y-1">
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-white bg-slate-800 text-white">
+                    <span>📊 لوحة التحكم الرئيسية</span>
+                </button>
+                <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2">📋 الطلبات والأوردرات</span>
+                    <span id="badge-orders-count" class="bg-pink-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">0</span>
+                </button>
+                <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span>💰 العهد والمالية والربحية</span>
+                </button>
+                <button onclick="switchTab('techs')" id="nav-techs" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200 hidden">
+                    <span>👥 الكادر الفني والأسطول</span>
+                </button>
+                <button onclick="switchTab('trash')" id="nav-trash" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 text-rose-400 hidden">
+                    <span>🗑️ سلة المحذوفات السرية</span>
+                </button>
+                <button onclick="switchTab('settings')" id="nav-settings" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200 hidden">
+                    <span class="text-pink-400">⚙️ إعدادات لوحة التحكم</span>
+                </button>
+            </nav>
+        </div>
+        
+        <div id="techStatusWidget" class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2 text-right my-2">
+            <p class="text-[10px] text-slate-400 font-bold border-b border-slate-800 pb-1">🚦 حالتك الميدانية الحالية:</p>
+            <div class="grid grid-cols-1 gap-1 text-[10px] font-bold text-white">
+                <button onclick="updateTechActiveRadarStatus('🟢 متاح بالسيارة')" class="bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🟢 متاح بالسيارة</button>
+                <button onclick="updateTechActiveRadarStatus('🟡 مشغول بتركيب')" class="bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🟡 مشغول بتركيب حالياً</button>
+                <button onclick="updateTechActiveRadarStatus('🔴 مغلق الدوام')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🔴 مغلق / انتهى الدوام</button>
+            </div>
+        </div>
+
+        <div class="border-t border-slate-800 pt-4 text-center space-y-2">
+            <button onclick="toggleAppThemeModeAction()" class="text-[10px] bg-slate-800 text-slate-300 font-bold py-1 px-3 rounded-lg w-full">🌓 تحويل المظهر ليلى / نهارى</button>
+            <button onclick="logOutSystemAccountForce()" class="text-[11px] font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-1.5 rounded-xl w-full hover:bg-rose-600 hover:text-white transition-all">🚪 تسجيل خروج آمن</button>
+            <p class="text-[10px] text-slate-500 font-bold">منظومة إيجل تيك الذكية © 2026</p>
+        </div>
+    </aside>
+
+    <div class="flex-1 flex flex-col h-screen overflow-hidden">
+        <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 flex-shrink-0 z-20">
+            <div class="w-full md:w-85 relative">
+                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث الذكي الشامل الفائق..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
+                <span class="absolute right-3 top-3 text-xs text-slate-400">🔍</span>
+            </div>
+            <div class="flex justify-between md:justify-end items-center w-full md:w-auto gap-4 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
+                <div class="flex items-center gap-1.5">
+                    <span class="text-[11px] font-bold text-slate-400">الحساب الحالي:</span>
+                    <span id="activeUserNameText" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-[11px] px-2.5 py-1 rounded-lg">جاري المزامنة...</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
+
+            <div id="tab-dashboard" class="tab-content active space-y-6">
+                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between col-span-2 lg:col-span-1">
+                        <div><p class="text-[10px] font-bold text-slate-400">إجمالي الطلبات</p><p id="dash-total" class="text-xl font-black text-slate-900">0</p></div>
+                        <span class="text-xl bg-blue-50 p-2 rounded-xl">📦</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div><p class="text-[10px] font-bold text-slate-400">في الانتظار</p><p id="dash-progress" class="text-xl font-black text-amber-600">0</p></div>
+                        <span class="text-xl bg-amber-50 p-2 rounded-xl">⏳</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div><p class="text-[10px] font-bold text-slate-400">جاري التركيب</p><p id="dash-total-current" class="text-xl font-black text-blue-600">0</p></div>
+                        <span class="text-xl bg-blue-50 p-2 rounded-xl">🚚</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div><p class="text-[10px] font-bold text-slate-400">تم بنجاح</p><p id="dash-success" class="text-xl font-black text-emerald-600">0</p></div>
+                        <span class="text-xl bg-emerald-50 p-2 rounded-xl">✅</span>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div><p class="text-[10px] font-bold text-slate-400">مشاكل / تأجيل</p><p id="dash-cancel" class="text-xl font-black text-rose-600">0</p></div>
+                        <span class="text-xl bg-rose-50 p-2 rounded-xl">🛑</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl border lg:col-span-2 h-64 hidden md:block">
+                        <canvas id="dashLineChart"></canvas>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl border h-64 flex flex-col justify-between hidden md:block">
+                        <canvas id="dashPieChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b">
+                        <h3 class="font-black text-xs text-slate-700">📋 آخر الحركات والتحديثات الميدانية الفورية</h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-right text-slate-500">
+                            <tbody id="dashLatestOrdersTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-orders" class="tab-content space-y-4">
+                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border">
+                    <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                        <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="admin-only bg-pink-500 hover:bg-pink-600 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md hidden">➕ أوردر جديد</button>
+                        <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">تصدير Excel</button>
+                        <button onclick="exportSelectedOrdersToWordDoc()" class="bg-cyan-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">📄 تصدير Word</button>
+                        <button onclick="printSelectedOrdersInvoices()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">🖨️ طباعة المحددة</button>
+                    </div>
+                </div>
+
+                <div class="hidden md:block bg-white rounded-2xl shadow-sm border overflow-hidden">
+                    <table class="w-full text-xs text-right text-slate-500">
+                        <thead class="bg-slate-100 border-b text-slate-700">
+                            <tr>
+                                <th class="p-4 text-center w-12"><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllOrders()"></th>
+                                <th class="p-4 font-bold">رقم الطلب</th>
+                                <th class="p-4 font-bold">العميل والموبايل</th>
+                                <th class="p-4 font-bold">العنوان والمسار</th>
+                                <th class="p-4 font-bold">الحساب والأرباح</th>
+                                <th class="p-4 font-bold">حالة الميدان والسبب</th>
+                                <th class="p-4 font-bold">الفني المكلف</th>
+                                <th class="p-4 font-bold text-center">إجراء التحكم</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mainOrdersTableBodyDesktop"></tbody>
+                    </table>
+                </div>
+
+                <div id="mainOrdersCardsContainerMobile" class="md:hidden space-y-4 pb-20"></div>
+            </div>
+
+            <div id="tab-financial" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-r-4 border-emerald-500">
+                        <p class="text-xs font-bold text-slate-400 mb-1">إجمالي الخزينة المعتمدة (كاش مستلم)</p>
+                        <p id="fin-total-revenue" class="text-xl font-black text-slate-900">0 ريال</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-r-4 border-indigo-600">
+                        <p class="text-xs font-bold text-slate-400 mb-1">صافي أرباح المؤسسة الكلية (بعد خصم المواد)</p>
+                        <p id="fin-pure-profit" class="text-xl font-black text-indigo-600">0 ريال</p>
+                    </div>
+                </div>
+                <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
+                    <div id="financialTechTableBody" class="space-y-3"></div>
+                </div>
+            </div>
+
+            <div id="tab-techs" class="tab-content space-y-6">
+                <div id="techCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="invoicePrintArea" class="hidden"></div>
+    
+    <div id="viewOrderDetailsModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs z-[250] hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
+            <div class="p-6 space-y-4 text-right max-h-[65vh] overflow-y-auto" id="viewDetailsModalContentArea"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

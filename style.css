@@ -1,0 +1,53 @@
+/* الأنماط المخصصة والمؤثرات التفاعلية لمنظومة إيجل تيك */
+body {
+    font-family: 'Cairo', sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* التنسيق والأمر الهندسي الفائق لإظهار بيانات الفاتورة وإخفاء باقي الموقع أثناء الطباعة */
+@media print {
+    /* إخفاء كل عناصر الموقع الأساسية */
+    body > *:not(#invoicePrintArea) {
+        display: none !important;
+    }
+    /* إجبار حاوية الطباعة على الظهور بكامل بياناتها */
+    #invoicePrintArea, #invoicePrintArea * {
+        visibility: visible !important;
+        display: block !important;
+    }
+    #invoicePrintArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        direction: rtl !important;
+    }
+}
+
+/* أنيميشن نبضات التنبيه المباشر */
+@keyframes alert-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.5);
+    }
+    70% {
+        transform: scale(1.01);
+        box-shadow: 0 0 0 8px rgba(236, 72, 153, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+    }
+}
+
+.pulse-alert-live {
+    animation: alert-pulse 2s ease-in-out infinite;
+}
