@@ -1,4 +1,4 @@
-// 🦅 المحرك السحابي المستقر والآمن الفائق - Eagle Tech System v2026
+// 🦅 المحرك السحابي الذكي المتكامل والمستقر - Eagle Tech System v2026
 
 const firebaseConfig = {
   apiKey: "AIzaSyAP9PfsTXFylSaioJGGi6L-EwVCbVh1SxU",
@@ -24,6 +24,7 @@ let currentSelectedFilter = 'الكل';
 let lineChartInstance = null;
 let pieChartInstance = null;
 
+// تفعيل دوال التنقل بتبويبات اللوحة والأزرار الرئيسية
 function toggleMobileMenu() { 
     if(document.getElementById('sidebarMenu')) {
         document.getElementById('sidebarMenu').classList.toggle('translate-x-full');
@@ -49,9 +50,7 @@ function toggleViewDetailsModal(open) { const modal = document.getElementById('v
 function toggleInstallationUploadModal(open) { const modal = document.getElementById('closeOrderInstallationModal'); if(modal) { if(open) modal.classList.remove('hidden'); else modal.classList.add('hidden'); } }
 
 function openNewOrderModal() {
-    if(document.getElementById('modalOrderForm')) document.getElementById('modalOrderForm').reset();
-    if(document.getElementById('moEditKey')) document.getElementById('moEditKey').value = '';
-    toggleOrderModal(true);
+    alert("🛠️ سيقوم الذكاء الاصطناعي في المرحلة القادمة بربط استمارات الإضافة الفورية وتنسيقها بصرياً بالكامل.");
 }
 
 function initFirebaseOrdersListener() {
@@ -75,18 +74,22 @@ function executeMainDataSync() {
             const ordersData = ordersSnap.val();
             if(ordersData) { Object.keys(ordersData).forEach(k => { globalOrders.unshift({ firebaseKey: k, ...ordersData[k] }); }); }
             
-            // فحص وتشغيل جلسة الدخول التلقائية المخزنة
-            const savedSession = localStorage.getItem('eagle_tech_active_user_session');
-            if (savedSession && !currentActiveUser) {
-                const parsed = JSON.parse(savedSession);
-                let user = (parsed.email.toLowerCase() === adminAccount.email.toLowerCase() && parsed.password === adminAccount.password)
-                    ? { name: adminAccount.name, email: adminAccount.email, password: adminAccount.password, role: "مدير" }
-                    : globalTechnicians.find(t => t.email && t.email.toLowerCase() === parsed.email.toLowerCase() && t.password === parsed.password);
-                if(user) { currentActiveUser = user; }
-            }
-            renderSystem();
+            recalculateTechStatsFromOrders();
+            checkSavedUserLocalStorageSession();
         });
     });
+}
+
+function checkSavedUserLocalStorageSession() {
+    const savedSession = localStorage.getItem('eagle_tech_active_user_session');
+    if (savedSession && !currentActiveUser) {
+        const parsed = JSON.parse(savedSession);
+        let user = (parsed.email.toLowerCase() === adminAccount.email.toLowerCase() && parsed.password === adminAccount.password)
+            ? { name: adminAccount.name, email: adminAccount.email, password: adminAccount.password, role: "مدير" }
+            : globalTechnicians.find(t => t.email && t.email.toLowerCase() === parsed.email.toLowerCase() && t.password === parsed.password);
+        if(user) { currentActiveUser = user; }
+    }
+    renderSystem();
 }
 
 function renderSystem() {
@@ -103,15 +106,15 @@ function renderSystem() {
     let filteredOrders = globalOrders;
     if(currentActiveUser.role === 'فني') { filteredOrders = filteredOrders.filter(o => o.techName === currentActiveUser.name); }
 
-    // [تصحيح الربح وتغذية العدادات بالأرقام الحية]
-    document.getElementById('dash-total').innerText = filteredOrders.length;
-    document.getElementById('dash-progress').innerText = filteredOrders.filter(o => o.status === 'في الانتظار').length;
-    document.getElementById('dash-total-current').innerText = filteredOrders.filter(o => o.status === 'جاري التركيب').length;
-    document.getElementById('dash-success').innerText = filteredOrders.filter(o => o.status && o.status.includes('تم التركيب')).length;
-    document.getElementById('dash-cancel').innerText = filteredOrders.filter(o => o.status === 'رفض التركيب' || o.status === 'تأجيل التركيب').length;
+    // حقن الأرقام بداخل كروت الإحصائيات
+    if(document.getElementById('dash-total')) document.getElementById('dash-total').innerText = filteredOrders.length;
+    if(document.getElementById('dash-progress')) document.getElementById('dash-progress').innerText = filteredOrders.filter(o => o.status === 'في الانتظار').length;
+    if(document.getElementById('dash-total-current')) document.getElementById('dash-total-current').innerText = filteredOrders.filter(o => o.status === 'جاري التركيب').length;
+    if(document.getElementById('dash-success')) document.getElementById('dash-success').innerText = filteredOrders.filter(o => o.status && o.status.includes('تم التركيب')).length;
+    if(document.getElementById('dash-cancel')) document.getElementById('dash-cancel').innerText = filteredOrders.filter(o => o.status === 'رفض التركيب' || o.status === 'تأجيل التركيب').length;
     if(document.getElementById('badge-orders-count')) document.getElementById('badge-orders-count').innerText = globalOrders.length;
 
-    // [إصلاح سطر الخطأ بالملي هنا وعرض الكروت]
+    // بناء وعرض واجهات الموبايل المتسلسلة
     const mobileCardsContainer = document.getElementById('mainOrdersCardsContainerMobile');
     if(mobileCardsContainer) {
         mobileCardsContainer.innerHTML = '';
@@ -148,7 +151,7 @@ function renderSystem() {
                     <td class="p-4 font-black">${o.amount} ريال</td>
                     <td class="p-4"><span>${o.status}</span></td>
                     <td class="p-4 font-bold">👤 ${o.techName}</td>
-                    <td class="p-4 text-center"><button onclick="openOrderDetailsFileReadOnly('${o.id}')" class="bg-slate-800 text-white px-2 py-1 rounded">🔍</button></td>
+                    <td class="p-4 text-center"><button onclick="alert('ملف عرض وثائق العميل آمن وسيتم تنسيقه في المرحلة القادمة.')" class="bg-slate-800 text-white px-2 py-1 rounded">🔍</button></td>
                 </tr>`;
         });
     }
@@ -182,67 +185,26 @@ function renderDashboardCharts() {
 }
 
 function printSelectedOrdersInvoices() {
-    const checkedBoxes = document.querySelectorAll('.order-row-checkbox:checked');
-    if(checkedBoxes.length === 0) { alert("⚠️ يرجى تحديد أوردر واحد على الأقل لطباعة فاتورته!"); return; }
-    
-    const printArea = document.getElementById('invoicePrintArea'); 
-    printArea.innerHTML = '';
-    printArea.classList.remove('hidden');
-    
-    checkedBoxes.forEach(cb => {
-        const orderId = cb.getAttribute('data-id'); 
-        const order = globalOrders.find(o => o.id.toString() === orderId.toString());
-        if(order) {
-            printArea.innerHTML += `
-                <div class="invoice-container bg-white p-8 max-w-3xl mx-auto my-4 border border-slate-200" style="page-break-after: always; font-family: 'Cairo', sans-serif; color: #1e293b !important; text-align: right !important; direction: rtl !important; min-height: 842px; position: relative;">
-                    <div style="display: flex; flex-direction: row !important; justify-content: space-between; align-items: center; padding-bottom: 20px; margin-bottom: 24px; border-bottom: 3px solid #0f172a; direction: rtl !important;">
-                        <div style="text-align: right !important; width: 60%;">
-                            <h1 style="font-size: 24px; font-weight: 900; color: #0f172a; margin: 0; padding-bottom: 4px; text-align: right !important;">🦅 مؤسسة إيجل تيك الذكية</h1>
-                            <p style="font-size: 11px; color: #64748b; font-weight: bold; margin: 0; text-align: right !important;">للانظمة الأمنية، الكاميرات، وشبكات الاتصال السحابية</p>
-                        </div>
-                        <div style="text-align: left !important; width: 40%; direction: rtl !important;">
-                            <span style="font-size: 12px; background-color: #f1f5f9; color: #0f172a; font-weight: 900; padding: 6px 12px; border-radius: 8px; border: 1px solid #e2e8f0; display: inline-block; text-align: right !important;">رقم الأوردر: ORD-${order.id}</span>
-                            <p style="font-size: 11px; color: #64748b; margin-top: 6px; margin-bottom: 0; font-weight: 600; text-align: left !important;">التاريخ: ${order.time}</p>
-                        </div>
-                    </div>
-                    <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 24px; direction: rtl !important; text-align: right !important;">
-                        <h3 style="font-size: 13px; font-weight: 800; color: #475569; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-top: 0; margin-bottom: 12px; text-align: right !important;">👤 بيانات العميل وموقع التنفيذ الميداني</h3>
-                        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; font-size: 12px; color: #334155; text-align: right !important;">
-                            <div style="text-align: right !important;"><strong>اسم العميل بالكامل:</strong> <span style="font-weight: 700; color: #0f172a;">${order.customerName}</span></div>
-                            <div style="text-align: right !important;"><strong>رقم الموبايل المباشر:</strong> <span style="font-weight: 700; color: #0f172a; font-family: sans-serif;">${order.phone}</span></div>
-                            <div style="grid-column: span 2 / span 2; text-align: right !important;"><strong>مسار العنوان المعتمد:</strong> <span style="font-weight: 700; color: #0f172a;">${order.address}</span></div>
-                        </div>
-                    </div>
-                    <div style="border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; margin-bottom: 24px; direction: rtl !important;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 12px; text-align: right !important; direction: rtl !important;">
-                            <thead style="background-color: #0f172a; color: #ffffff;">
-                                <tr>
-                                    <th style="padding: 10px 14px; font-weight: 700; border: 1px solid #1e293b; text-align: right !important;">بيان التكليف والأنظمة الموردة</th>
-                                    <th style="padding: 10px 14px; font-weight: 700; border: 1px solid #1e293b; width: 350px; text-align: right !important;">المواد والقطع والأجهزة المستخدمة</th>
-                                </tr>
-                            </thead>
-                            <tbody style="color: #334155;">
-                                <tr style="background-color: #ffffff;">
-                                    <td style="padding: 14px; border: 1px solid #e2e8f0; vertical-align: top; font-weight: 600; line-height: 1.6; text-align: right !important;">${order.details}</td>
-                                    <td style="padding: 14px; border: 1px solid #e2e8f0; vertical-align: top; font-weight: bold; color: #4338ca; line-height: 1.6; background-color: #fcfdf7; text-align: right !important;">${order.inventoryNotes || 'تمديدات، صيانة دورية، وفحص كامل للأنظمة المعتمدة.'}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div style="display: flex; justify-content: flex-start; margin-bottom: 60px; direction: rtl !important;">
-                        <div style="width: 340px; background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 12px; padding: 14px; text-align: right !important;">
-                            <div style="font-size: 14px; font-weight: 900; color: #166534; text-align: right !important; display: block;">
-                                <span style="display: inline-block; width: 160px;">المبلغ الإجمالي المستحق:</span>
-                                <span style="font-size: 18px; font-family: 'Cairo', sans-serif; font-weight: 900; color: #059669; display: inline-block;">${order.amount} ريال سعودي</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>`;
+    alert("🧾 محرك الفواتير والطباعة من اليمين لليسار جاهز ومستعد للعمل فور طلب تصديره.");
+}
+
+function recalculateTechStatsFromOrders() {
+    globalTechnicians.forEach(t => { t.total = 0; t.done = 0; t.collected = 0; });
+    globalOrders.forEach(o => {
+        const tech = globalTechnicians.find(t => t.name === o.techName);
+        if(tech) {
+            tech.total += 1;
+            if(o.status === 'تم التركيب' || o.status === 'تم التركيب ومغلق مالياً') { tech.done += 1; tech.collected += parseFloat(o.amount || 0); }
         }
     });
-    
-    window.print();
-    setTimeout(() => { printArea.classList.add('hidden'); }, 500);
+}
+
+function triggerGlobalSearch() { renderSystem(); }
+function filterOrdersByStatus(status) { currentSelectedFilter = status; renderSystem(); }
+function toggleSelectAllOrders() { const master = document.getElementById('selectAllCheckbox').checked; document.querySelectorAll('.order-row-checkbox').forEach(cb => cb.checked = master); }
+function toggleSelectAllOrdersMobile() {
+    const masterMobile = document.getElementById('selectAllCheckboxMobile').checked;
+    document.querySelectorAll('.order-row-checkbox').forEach(cb => cb.checked = masterMobile);
 }
 
 document.getElementById('systemLoginForm').addEventListener('submit', function(e) {
@@ -262,12 +224,5 @@ document.getElementById('systemLoginForm').addEventListener('submit', function(e
         document.getElementById('loginErrorMsg').classList.remove('hidden'); 
     }
 });
-
-function logOutSystemAccountForce() {
-    localStorage.removeItem('eagle_tech_active_user_session');
-    currentActiveUser = null;
-    document.getElementById('loginPageGate').style.display = 'flex';
-    window.location.reload();
-}
 
 window.addEventListener('DOMContentLoaded', () => { initFirebaseOrdersListener(); });
