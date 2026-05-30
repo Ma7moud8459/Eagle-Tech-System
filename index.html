@@ -3,162 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Eagle Tech - المنظومة السحابية المتكاملة v2026</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <title>Eagle Tech - منظومة إدارة الأسطول والفنيين</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght=300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
     
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
     <link rel="stylesheet" href="style.css">
 </head>
-<body id="masterAppBody" class="bg-slate-50 text-slate-800 min-h-screen flex flex-col md:flex-row overflow-hidden">
+<body class="bg-slate-50 text-slate-800 min-h-screen flex overflow-hidden">
 
-    <div id="loginPageGate" class="fixed inset-0 bg-[#0f172a] z-[150] flex items-center justify-center p-4">
-        <div class="bg-[#121829] border border-slate-800 w-full max-w-md p-6 md:p-8 rounded-2xl shadow-2xl space-y-6 text-center">
-            <div class="space-y-2">
-                <span id="loginLogoIcon" class="text-5xl">🦅</span>
-                <h2 class="text-white font-black text-xl">منظومة <span class="text-pink-500">Eagle Tech</span></h2>
-                <p class="text-xs text-slate-400 font-bold">تسجيل الدخول الموحد لإدارة الأسطول والميدان</p>
-            </div>
-            
-            <form id="systemLoginForm" class="space-y-4 text-right">
-                <div class="space-y-1">
-                    <label class="text-[11px] font-bold text-slate-400 mr-1">البريد الإلكتروني للعمل:</label>
-                    <input type="email" id="loginEmail" placeholder="name@eagle.com" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
-                </div>
-                <div class="space-y-1">
-                    <label class="text-[11px] font-bold text-slate-400 mr-1">كلمة المرور السرية:</label>
-                    <input type="password" id="loginPassword" placeholder="••••••••" class="w-full text-xs p-3 bg-slate-900/50 border border-slate-800 text-slate-200 rounded-xl focus:outline-none focus:border-pink-500" required>
-                </div>
-                
-                <div id="loginErrorMsg" class="hidden text-[11px] text-red-400 font-bold bg-red-500/10 border border-red-500/20 p-2.5 rounded-lg text-center">
-                    ⚠️ بيانات الدخول غير صحيحة أو الحساب غير مفعل!
-                </div>
-
-                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-3 rounded-xl shadow-md transition-all">
-                    تسجيل الدخول الآمن ←
-                </button>
-            </form>
-            <p class="text-[9px] text-slate-600 font-bold">نظام محمي بالكامل سحابياً © 2026</p>
-        </div>
-    </div>
-
-    <header class="md:hidden bg-[#121829] text-white p-4 flex justify-between items-center z-40 border-b border-slate-800">
-        <div class="flex items-center gap-2">
-            <span class="system-logo-span text-xl">🦅</span>
-            <span class="font-black text-sm">Eagle <span class="text-pink-500">Tech</span></span>
-        </div>
-        <button onclick="toggleMobileMenu()" class="p-2 bg-slate-800 rounded-lg focus:outline-none text-pink-500 font-black text-lg">☰</button>
-    </header>
-
-    <aside id="sidebarMenu" class="fixed inset-y-0 right-0 transform translate-x-full md:relative md:translate-x-0 w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-full md:h-screen z-50 border-l border-slate-800 transition-transform duration-300 ease-in-out">
-        <div class="space-y-5 overflow-y-auto max-h-[75vh] pr-1">
+    <aside class="w-72 bg-[#121829] text-slate-400 flex flex-col justify-between p-4 flex-shrink-0 h-screen z-30 border-l border-slate-800">
+        <div class="space-y-6">
             <div class="flex items-center justify-between border-b border-slate-800 pb-4">
                 <div class="flex items-center gap-2">
-                    <span class="system-logo-span text-2xl">🦅</span>
+                    <span class="text-2xl">🦅</span>
                     <span class="text-white font-black text-lg tracking-wide">Eagle <span class="text-pink-500">Tech</span></span>
                 </div>
-                <button onclick="toggleMobileMenu()" class="md:hidden text-slate-400 text-sm font-bold bg-slate-800 px-2.5 py-1 rounded">إغلاق ×</button>
+                <span class="text-[10px] bg-slate-800 border border-slate-700 text-slate-300 font-bold px-2 py-0.5 rounded">v2.6</span>
             </div>
 
             <nav class="space-y-1">
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-white bg-slate-800 text-white">
-                    <span>📊 لوحة التحكم الرئيسية</span>
+                <p class="text-[10px] uppercase font-bold text-slate-600 px-3 mb-2 tracking-wider">الرئيسية</p>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-right hover:bg-slate-800/50 hover:text-white bg-slate-800 text-white">
+                    <span class="flex items-center gap-2.5">📊 لوحة التحكم</span>
                 </button>
-                <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                    <span class="flex items-center gap-2">📋 الطلبات والأوردرات</span>
+                <button onclick="switchTab('orders')" id="nav-orders" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2.5">📋 الطلبات والأوردرات</span>
                     <span id="badge-orders-count" class="bg-pink-500 text-white text-[9px] px-1.5 py-0.5 rounded-full font-black">0</span>
                 </button>
-                <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200">
-                    <span>💰 العهد والمالية والربحية</span>
+                <button onclick="switchTab('financial')" id="nav-financial" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2.5">💰 المالية والمحفظة</span>
+                    <span class="bg-emerald-600 text-white text-[9px] px-1.5 py-0.5 rounded font-bold">NEW</span>
                 </button>
-                <button onclick="switchTab('techs')" id="nav-techs" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200 hidden">
-                    <span>👥 الكادر الفني والأسطول</span>
+                <button onclick="switchTab('tracking')" id="nav-tracking" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2.5">🗺️ التتبع المباشر</span>
+                    <span class="bg-rose-600 text-white text-[9px] px-1.5 py-0.5 rounded-full animate-pulse font-bold">LIVE</span>
                 </button>
-                <button onclick="switchTab('trash')" id="nav-trash" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 text-rose-400 hidden">
-                    <span>🗑️ سلة المحذوفات السرية</span>
+                <button onclick="switchTab('analytics')" id="nav-analytics" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2.5">📈 التحليلات والتقارير</span>
                 </button>
-                <button onclick="switchTab('settings')" id="nav-settings" class="admin-only w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-right hover:bg-slate-800/50 hover:text-slate-200 hidden">
-                    <span class="text-pink-400">⚙️ إعدادات لوحة التحكم</span>
+                <button onclick="switchTab('techs')" id="nav-techs" class="w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold transition-all text-right hover:bg-slate-800/50 hover:text-slate-200">
+                    <span class="flex items-center gap-2.5">👥 إدارة الفنيين</span>
                 </button>
             </nav>
         </div>
         
-        <div id="techStatusWidget" class="bg-slate-900 border border-slate-800 p-3 rounded-xl space-y-2 text-right my-2">
-            <p class="text-[10px] text-slate-400 font-bold border-b border-slate-800 pb-1">🚦 حالتك الميدانية الحالية:</p>
-            <div class="grid grid-cols-1 gap-1 text-[10px] font-bold text-white">
-                <button onclick="updateTechActiveRadarStatus('🟢 متاح بالسيارة')" class="bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🟢 متاح بالسيارة</button>
-                <button onclick="updateTechActiveRadarStatus('🟡 مشغول بتركيب')" class="bg-amber-600/20 hover:bg-amber-600 text-amber-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🟡 مشغول بتركيب حالياً</button>
-                <button onclick="updateTechActiveRadarStatus('🔴 مغلق الدوام')" class="bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white p-1.5 rounded-lg transition-all text-right pr-2">🔴 مغلق / انتهى الدوام</button>
-            </div>
-        </div>
-
-        <div class="border-t border-slate-800 pt-4 text-center space-y-2">
-            <button onclick="toggleAppThemeModeAction()" class="text-[10px] bg-slate-800 text-slate-300 font-bold py-1 px-3 rounded-lg w-full">🌓 تحويل المظهر ليلى / نهارى</button>
-            <button onclick="logOutSystemAccountForce()" class="text-[11px] font-black text-rose-400 bg-rose-500/10 border border-rose-500/20 px-4 py-1.5 rounded-xl w-full hover:bg-rose-600 hover:text-white transition-all">🚪 تسجيل خروج آمن</button>
-            <p class="text-[10px] text-slate-500 font-bold">منظومة إيجل تيك الذكية © 2026</p>
+        <div class="border-t border-slate-800 pt-4 mb-2 text-center">
+            <p class="text-[10px] text-slate-500 font-bold tracking-wide">
+                جميع الحقوق محفوظة لشركة <br>
+                <span class="text-slate-300 font-black">Eagle Tech © 2026</span>
+            </p>
         </div>
     </aside>
 
     <div class="flex-1 flex flex-col h-screen overflow-hidden">
-        <header class="bg-white border-b border-slate-200 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center gap-3 flex-shrink-0 z-20">
-            <div class="w-full md:w-85 relative">
-                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث الذكي الشامل الفائق..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500">
+        <header class="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center flex-shrink-0 z-20">
+            <div class="w-96 relative">
+                <input type="text" id="globalSearch" oninput="triggerGlobalSearch()" placeholder="البحث السريع في المنظومة..." class="w-full bg-slate-50 text-xs border border-slate-200 rounded-xl py-2.5 pr-9 pl-4 focus:outline-none focus:border-pink-500 transition-all">
                 <span class="absolute right-3 top-3 text-xs text-slate-400">🔍</span>
             </div>
-            <div class="flex justify-between md:justify-end items-center w-full md:w-auto gap-4 border-t md:border-t-0 pt-2 md:pt-0 border-slate-100">
-                <div class="flex items-center gap-1.5">
-                    <span class="text-[11px] font-bold text-slate-400">الحساب الحالي:</span>
-                    <span id="activeUserNameText" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-[11px] px-2.5 py-1 rounded-lg">جاري المزامنة...</span>
+            <div class="flex items-center gap-4">
+                <div class="flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-[11px] font-bold">
+                    <button class="px-3 py-1 bg-white shadow-sm rounded-lg text-slate-800">AR</button>
+                    <button class="px-3 py-1 text-slate-400">EN</button>
+                </div>
+                <div class="flex items-center gap-2 border-r border-slate-200 pr-4">
+                    <span class="text-xs font-bold text-slate-500">حساب المحاكاة النشط:</span>
+                    <select id="userSimulator" onchange="changeActiveUser(this.value)" class="bg-slate-100 border border-slate-200 text-slate-800 font-black text-xs px-2 py-1.5 rounded-lg focus:outline-none"></select>
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 overflow-y-auto p-4 md:p-6 space-y-6 bg-slate-50/50">
+        <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-slate-50/50">
 
             <div id="tab-dashboard" class="tab-content active space-y-6">
-                <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between col-span-2 lg:col-span-1">
-                        <div><p class="text-[10px] font-bold text-slate-400">إجمالي الطلبات</p><p id="dash-total" class="text-xl font-black text-slate-900">0</p></div>
-                        <span class="text-xl bg-blue-50 p-2 rounded-xl">📦</span>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 mb-1">إجمالي طلبات اليوم</p>
+                            <p id="dash-total" class="text-2xl font-black text-slate-900">0</p>
+                            <p class="text-[10px] text-emerald-600 font-bold mt-1">↑ 12% مقارنة بالأمس</p>
+                        </div>
+                        <span class="text-2xl bg-blue-50 p-3 rounded-xl">📦</span>
                     </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div><p class="text-[10px] font-bold text-slate-400">في الانتظار</p><p id="dash-progress" class="text-xl font-black text-amber-600">0</p></div>
-                        <span class="text-xl bg-amber-50 p-2 rounded-xl">⏳</span>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 mb-1">قيد التنفيذ والمتابعة</p>
+                            <p id="dash-progress" class="text-2xl font-black text-amber-600">0</p>
+                            <p class="text-[10px] text-amber-600 font-bold mt-1">⏳ جاري العمل ميدانياً</p>
+                        </div>
+                        <span class="text-2xl bg-amber-50 p-3 rounded-xl">🚚</span>
                     </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div><p class="text-[10px] font-bold text-slate-400">جاري التركيب</p><p id="dash-total-current" class="text-xl font-black text-blue-600">0</p></div>
-                        <span class="text-xl bg-blue-50 p-2 rounded-xl">🚚</span>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 mb-1">تم تسليمها وتركيبها</p>
+                            <p id="dash-success" class="text-2xl font-black text-emerald-600">0</p>
+                            <p class="text-[10px] text-emerald-600 font-bold mt-1">↑ 18% معدل نجاح أعلى</p>
+                        </div>
+                        <span class="text-2xl bg-emerald-50 p-3 rounded-xl">✅</span>
                     </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div><p class="text-[10px] font-bold text-slate-400">تم بنجاح</p><p id="dash-success" class="text-xl font-black text-emerald-600">0</p></div>
-                        <span class="text-xl bg-emerald-50 p-2 rounded-xl">✅</span>
-                    </div>
-                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div><p class="text-[10px] font-bold text-slate-400">مشاكل / تأجيل</p><p id="dash-cancel" class="text-xl font-black text-rose-600">0</p></div>
-                        <span class="text-xl bg-rose-50 p-2 rounded-xl">🛑</span>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+                        <div>
+                            <p class="text-xs font-bold text-slate-400 mb-1">بلاغات المشاكل والرفض</p>
+                            <p id="dash-cancel" class="text-2xl font-black text-red-600">0</p>
+                            <p class="text-[10px] text-red-500 font-bold mt-1">⚠️ يتطلب مراجعة فورية</p>
+                        </div>
+                        <span class="text-2xl bg-red-50 p-3 rounded-xl">⚠️</span>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="bg-white p-5 rounded-2xl border lg:col-span-2 h-64 hidden md:block">
-                        <canvas id="dashLineChart"></canvas>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 space-y-4">
+                        <h4 class="text-xs font-black text-slate-700">📈 التوصيلات اليومية (آخر 7 أيام للعمليات الميدانية)</h4>
+                        <div class="h-64"><canvas id="dashLineChart"></canvas></div>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl border h-64 flex flex-col justify-between hidden md:block">
-                        <canvas id="dashPieChart"></canvas>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4 flex flex-col justify-between">
+                        <h4 class="text-xs font-black text-slate-700">🍩 نسبة توزيع حالات المنظومة الحالية</h4>
+                        <div class="h-48 flex justify-center"><canvas id="dashPieChart"></canvas></div>
+                        <div class="text-center text-xs font-bold text-slate-400">تحديث تلقائي فوري مالي</div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
-                    <div class="p-4 bg-slate-50 border-b">
-                        <h3 class="font-black text-xs text-slate-700">📋 آخر الحركات والتحديثات الميدانية الفورية</h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                        <h3 class="font-black text-xs text-slate-700">📋 أحدث الطلبات والتحركات الميدانية الحالية</h3>
+                        <button onclick="switchTab('orders')" class="text-xs text-pink-500 hover:underline font-bold">عرض الكل ←</button>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-xs text-right text-slate-500">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
+                                <tr>
+                                    <th class="p-3 font-bold">رقم الطلب</th>
+                                    <th class="p-3 font-bold">العميل</th>
+                                    <th class="p-3 font-bold">الحالة</th>
+                                    <th class="p-3 font-bold">الفني المكلف</th>
+                                </tr>
+                            </thead>
                             <tbody id="dashLatestOrdersTable"></tbody>
                         </table>
                     </div>
@@ -166,30 +147,41 @@
             </div>
 
             <div id="tab-orders" class="tab-content space-y-4">
-                <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border">
-                    <div class="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                        <button id="btnAddNewOrderForm" onclick="openNewOrderModal()" class="admin-only bg-pink-500 hover:bg-pink-600 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md hidden">➕ أوردر جديد</button>
-                        <button onclick="exportOrdersToExcel()" class="bg-emerald-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">تصدير Excel</button>
-                        <button onclick="exportSelectedOrdersToWordDoc()" class="bg-cyan-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">📄 تصدير Word</button>
-                        <button onclick="printSelectedOrdersInvoices()" class="bg-blue-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl shadow-sm">🖨️ طباعة المحددة</button>
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <button onclick="openNewOrderModal()" class="bg-pink-500 hover:bg-pink-600 text-white text-xs font-black px-4 py-2.5 rounded-xl shadow-md transition-all">+ طلب جديد</button>
+                        <button onclick="exportOrdersToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all">تصدير Excel</button>
+                        <button onclick="printSelectedOrdersInvoices()" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all">🖨️ طباعة الفواتير المحددة</button>
+                    </div>
+                    <div class="flex gap-1 bg-slate-100 p-1 rounded-xl text-[11px] font-bold">
+                        <button onclick="filterOrdersByStatus('الكل')" class="px-3 py-1.5 rounded-lg text-slate-700 bg-white shadow-sm">الكل</button>
+                        <button onclick="filterOrdersByStatus('في الانتظار')" class="px-3 py-1.5 rounded-lg text-slate-500">جديد / معلق</button>
+                        <button onclick="filterOrdersByStatus('جاري التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500">جاري الميدان</button>
+                        <button onclick="filterOrdersByStatus('تم التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500">تم التسليم</button>
+                        <button onclick="filterOrdersByStatus('رفض التركيب')" class="px-3 py-1.5 rounded-lg text-slate-500">مشكلة</button>
                     </div>
                 </div>
 
-                <div class="hidden md:block bg-white rounded-2xl shadow-sm border overflow-hidden">
+                <div class="flex items-center gap-2 bg-white p-3 rounded-xl border text-xs">
+                    <input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllOrders()" class="w-4 h-4 text-pink-600">
+                    <label for="selectAllCheckbox" class="font-bold text-slate-700">تحديد / إلغاء تحديد جميع الأوردرات بالكامل لعمليات الطباعة الجماعية</label>
+                </div>
+
+                <div class="hidden md:block bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
                     <table class="w-full text-xs text-right text-slate-500">
-                        <thead class="bg-slate-100 border-b text-slate-700">
+                        <thead class="bg-slate-100 border-b border-slate-200 text-slate-700">
                             <tr>
-                                <th class="p-4 text-center w-12"><input type="checkbox" id="selectAllCheckbox" onclick="toggleSelectAllOrders()"></th>
-                                <th class="p-4 font-bold">رقم الطلب</th>
-                                <th class="p-4 font-bold">العميل والموبايل</th>
-                                <th class="p-4 font-bold">العنوان والمسار</th>
-                                <th class="p-4 font-bold">الحساب والأرباح</th>
-                                <th class="p-4 font-bold">حالة الميدان والسبب</th>
+                                <th class="p-4 font-bold text-center w-12">اختر</th>
+                                <th class="p-4 font-bold">رقم الطلب والتاريخ</th>
+                                <th class="p-4 font-bold">العميل والجوال</th>
+                                <th class="p-4 font-bold">المسار والعنوان</th>
+                                <th class="p-4 font-bold">النوع والتفاصيل المالية</th>
+                                <th class="p-4 font-bold">الحالة الإجرائية</th>
                                 <th class="p-4 font-bold">الفني المكلف</th>
-                                <th class="p-4 font-bold text-center">إجراء التحكم</th>
+                                <th class="p-4 font-bold text-center">الإجراء المباشر لفني الميدان</th>
                             </tr>
                         </thead>
-                        <tbody id="mainOrdersTableBodyDesktop"></tbody>
+                        <tbody id="mainOrdersTableBody"></tbody>
                     </table>
                 </div>
 
@@ -197,35 +189,193 @@
             </div>
 
             <div id="tab-financial" class="tab-content space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-r-4 border-emerald-500">
-                        <p class="text-xs font-bold text-slate-400 mb-1">إجمالي الخزينة المعتمدة (كاش مستلم)</p>
-                        <p id="fin-total-revenue" class="text-xl font-black text-slate-900">0 ريال</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-emerald-500">
+                        <p class="text-xs font-bold text-slate-400 mb-1">الإيراد الشهري الكلي لـ إيجل تيك</p>
+                        <p id="fin-total-revenue" class="text-2xl font-black text-slate-900">0 ريال</p>
+                        <p class="text-[10px] text-emerald-600 font-bold mt-1">↑ 21% مقارنة بالشهر الماضي</p>
                     </div>
-                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-r-4 border-indigo-600">
-                        <p class="text-xs font-bold text-slate-400 mb-1">صافي أرباح المؤسسة الكلية (بعد خصم المواد)</p>
-                        <p id="fin-pure-profit" class="text-xl font-black text-indigo-600">0 ريال</p>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-blue-500">
+                        <p class="text-xs font-bold text-slate-400 mb-1">تم تحصيله واعتماده اليوم</p>
+                        <p id="fin-total-collected" class="text-2xl font-black text-blue-600">0 ريال</p>
+                        <p class="text-[10px] text-slate-400 font-bold mt-1">مبالغ كاش وتحويلات بنكية</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 border-r-4 border-amber-500">
+                        <p class="text-xs font-bold text-slate-400 mb-1">العهدة المعلقة بالذمة (مع الفنيين)</p>
+                        <p id="fin-total-pending" class="text-2xl font-black text-amber-600">0 ريال</p>
+                        <p class="text-[10px] text-amber-600 font-bold mt-1">⚠️ مبالغ كاش لم تُسلم للإدارة</p>
                     </div>
                 </div>
-                <div class="bg-white p-5 rounded-2xl shadow-sm border space-y-3">
-                    <div id="financialTechTableBody" class="space-y-3"></div>
+
+                <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="text-xs font-black text-slate-700">💰 كشف حساب العهد والتحصيلات التفصيلي لكل فني بالمؤسسة</h4>
+                        <button onclick="clearAllTechWallets()" class="text-[11px] text-red-500 hover:underline font-bold">إعادة تصفير وتصفية الحسابات</button>
+                    </div>
+                    <div class="overflow-x-auto border border-slate-100 rounded-xl">
+                        <table class="w-full text-xs text-right text-slate-500">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-slate-700">
+                                <tr>
+                                    <th class="p-3 font-bold">اسم الفني / المهندس</th>
+                                    <th class="p-3 font-bold">إجمالي ما حصله كاش</th>
+                                    <th class="p-3 font-bold">تم تسليمه للإدارة</th>
+                                    <th class="p-3 font-bold">باقي بذمته (عهدة معلقة)</th>
+                                    <th class="p-3 font-bold text-center">أكشن مالي</th>
+                                </tr>
+                            </thead>
+                            <tbody id="financialTechTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-tracking" class="tab-content space-y-6">
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex justify-between items-center">
+                    <div>
+                        <h3 class="font-black text-sm text-slate-800">التتبع المباشر لحركة الفنيين والسيارات</h3>
+                        <p class="text-[11px] text-slate-400">منطقة الخليج العربي والمملكة - تحديث ذكي وبث حي تلقائي</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs px-3 py-1 rounded-lg font-bold">🟢 3 نشطين</span>
+                        <span class="bg-amber-50 text-amber-700 border border-amber-200 text-xs px-3 py-1 rounded-lg font-bold">🚚 2 في الطريق</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                        <p class="text-xs font-black text-slate-400 uppercase tracking-wider">الفنيون النشطون الآن</p>
+                        <div id="trackingTechList" class="space-y-2"></div>
+                    </div>
+                    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 lg:col-span-3 flex flex-col justify-between relative min-h-[450px]">
+                        <div class="absolute inset-0 bg-slate-50 rounded-2xl overflow-hidden flex items-center justify-center border border-dashed border-slate-200">
+                            <div class="w-full h-full relative p-6 font-bold text-slate-300 text-xs select-none">
+                                <div class="absolute top-1/4 left-1/3 text-slate-800 bg-white p-2 rounded-xl shadow border flex items-center gap-1.5 text-[10px]">
+                                    <span class="bg-blue-900 text-white p-1 rounded text-[9px]">AA</span> الكويت
+                                </div>
+                                <div class="absolute top-1/2 left-1/2 text-slate-800 bg-white p-2 rounded-xl shadow border flex items-center gap-1.5 text-[10px]">
+                                    <span class="bg-emerald-600 text-white p-1 rounded text-[9px]">KA</span> الدوحة / الدمام
+                                </div>
+                                <div class="absolute top-1/2 right-1/4 text-slate-800 bg-white p-2 rounded-xl shadow border flex items-center gap-1.5 text-[10px]">
+                                    <span class="bg-pink-500 text-white p-1 rounded text-[9px]">MA</span> دبي
+                                </div>
+                                <div class="absolute bottom-1/3 left-1/4 text-slate-800 bg-white p-2 rounded-xl shadow border flex items-center gap-1.5 text-[10px]">
+                                    <span class="bg-indigo-900 text-white p-1 rounded text-[9px]">AA</span> الرياض
+                                </div>
+                                <div class="text-center text-slate-400 font-medium py-36">🗺️ محاكاة خريطة التتبع المباشر لأسطول إيجل تيك الحركي</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-analytics" class="tab-content space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                        <p class="text-xs font-bold text-slate-400 mb-1">معدل النجاح الإجمالي والتركيب</p>
+                        <p class="text-3xl font-black text-emerald-600">94.8%</p>
+                        <div class="w-full bg-slate-100 h-2 rounded-full mt-3 overflow-hidden">
+                            <div class="bg-emerald-500 h-full w-[94.8%]"></div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                        <p class="text-xs font-bold text-slate-400 mb-1">إجمالي الأوردرات المنجزة هذا الشهر</p>
+                        <p class="text-3xl font-black text-blue-900">1,847</p>
+                        <p class="text-[10px] text-blue-600 font-bold mt-2">الأوردرات الأعلى كفاءة تاريخياً</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 text-center">
+                        <p class="text-xs font-bold text-slate-400 mb-1">متوسط وقت تلبية بلاغ التركيب</p>
+                        <p class="text-3xl font-black text-pink-500">2.4h</p>
+                        <p class="text-[10px] text-pink-500 font-bold mt-2">سرعة استجابة استثنائية للفنيين</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2 space-y-4">
+                        <h4 class="text-xs font-black text-slate-700">📈 منحنى كفاءة واتجاه العمليات خلال الـ 30 يوماً الماضية</h4>
+                        <div class="h-64"><canvas id="analyticsLineChart"></canvas></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200 space-y-4">
+                        <h4 class="text-xs font-black text-slate-700">📊 توزيع حجم الأوردرات حسب المدن الحيوية</h4>
+                        <div class="h-64"><canvas id="analyticsCityBarChart"></canvas></div>
+                    </div>
                 </div>
             </div>
 
             <div id="tab-techs" class="tab-content space-y-6">
-                <div id="techCardsGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4"></div>
+                <div class="flex justify-between items-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+                    <h3 class="font-black text-xs text-slate-700">👥 قائمة حسابات الكادر الفني الميداني المسجل بالشركة</h3>
+                    <button onclick="toggleSidebarSettingsModal(true)" class="bg-pink-500 hover:bg-pink-600 text-white text-xs font-black px-4 py-2 rounded-xl shadow transition-all">+ إضافة فني جديد</button>
+                </div>
+                <div id="techCardsGrid" class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4"></div>
             </div>
 
         </div>
     </div>
 
-    <div id="invoicePrintArea" class="hidden"></div>
-    
-    <div id="viewOrderDetailsModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs z-[250] hidden flex items-center justify-center p-4">
-        <div class="bg-white w-full max-w-lg rounded-3xl shadow-2xl overflow-hidden">
-            <div class="p-6 space-y-4 text-right max-h-[65vh] overflow-y-auto" id="viewDetailsModalContentArea"></div>
+    <div id="addTechModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-[#121829] text-white px-5 py-4 flex justify-between items-center">
+                <h3 class="text-xs font-black">➕ تسجيل حساب فني جديد بالسيستم</h3>
+                <button onclick="toggleSidebarSettingsModal(false)" class="text-slate-400 hover:text-white font-bold">✕</button>
+            </div>
+            <form id="modalTechForm" class="p-5 space-y-3">
+                <input type="text" id="mTechName" placeholder="اسم الفني / المهندس بالكامل" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-500" required>
+                <input type="email" id="mTechEmail" placeholder="البريد الإلكتروني تسجيل الدخول" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-500" required>
+                <input type="tel" id="mTechPhone" placeholder="رقم جوال الفني المكلف" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-500" required>
+                <input type="password" id="mTechUserPass" placeholder="كلمة المرور السرية" class="w-full text-xs p-2.5 bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:border-pink-500" required>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-2.5 rounded-lg shadow transition-all">إنشاء الحساب وتجهيز المحفظة المادية</button>
+            </form>
         </div>
     </div>
+
+    <div id="addOrderModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div class="bg-[#121829] text-white px-5 py-4 flex justify-between items-center">
+                <h3 class="text-xs font-black">➕ استقبال وتوجيه أوردر ميداني جديد</h3>
+                <button onclick="toggleOrderModal(false)" class="text-slate-400 hover:text-white font-bold">✕</button>
+            </div>
+            <form id="modalOrderForm" class="p-5 space-y-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="text" id="moCustName" placeholder="اسم العميل" class="text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500" required>
+                    <input type="tel" id="moCustPhone" placeholder="رقم الجوال" class="text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500" required>
+                </div>
+                <input type="text" id="moAddress" placeholder="المسار / العنوان (مثال: الدمام - النزهة)" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500" required>
+                <input type="url" id="moLocationUrl" placeholder="رابط اللوكيشن (خرائط جوجل)" class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500">
+                <div class="grid grid-cols-2 gap-2">
+                    <input type="number" id="moAmount" placeholder="قيمة المبلغ (ريال)" class="text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500" required>
+                    <select id="moTech" class="text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500"></select>
+                </div>
+                <textarea id="moDetails" rows="3" placeholder="تفاصيل كاميرات المراقبة أو نوع الطرد والمعدات المطلوبة..." class="w-full text-xs p-2.5 bg-slate-50 border rounded-lg focus:outline-none focus:border-pink-500" required></textarea>
+                <button type="submit" class="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs font-black py-2.5 rounded-lg shadow transition-all">حفظ وتحويل الطلب فوراً</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="closeOrderInstallationModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden">
+            <div class="bg-emerald-600 text-white px-5 py-4 flex justify-between items-center">
+                <h3 class="text-xs font-black">📸 إغلاق الطلب وتوثيق جودة التركيبات ميدانياً</h3>
+                <button onclick="toggleInstallationUploadModal(false)" class="text-white font-bold text-lg">✕</button>
+            </div>
+            <form id="installationUploadForm" class="p-5 space-y-4 text-right">
+                <input type="hidden" id="uploadTargetOrderId">
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 block">اختر صور الشغل والتركيبات (يمكنك اختيار حتى 10 صور من الجوال دفعة واحدة):</label>
+                    <input type="file" id="installationPhotosInput" accept="image/*" multiple class="w-full text-xs p-3 bg-slate-50 border border-dashed rounded-xl focus:outline-none">
+                    <p class="text-[10px] text-slate-400 font-medium">💡 اضغط هنا وافتح الاستوديو وحدد صور التوثيق الفعلي للتركيبات مباشرة.</p>
+                </div>
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 block">ملاحظات الفني الختامية على الموقع المعين:</label>
+                    <textarea id="uploadTechComments" rows="3" placeholder="اكتب أي ملاحظات أو نواقص إضافية للمدير هنا..." class="w-full text-xs p-3 bg-slate-50 border rounded-xl focus:outline-none"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black py-3 rounded-xl shadow shadow-emerald-600/20">
+                    💾 حفظ المستندات وإغلاق الأوردر بنجاح ✅
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="invoicePrintArea" class="hidden"></div>
 
     <script src="app.js"></script>
 </body>
